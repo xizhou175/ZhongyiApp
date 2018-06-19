@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Zhongyi</string>
+    <string name="search">症状搜索</string>
+    <string name="front">正面</string>
+    <string name="back">反面</string>
+</resources>
