@@ -1,38 +1,36 @@
 package com.hfad.zhongyi;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class HeadSpecificActivity extends AppCompatActivity {
 
-    boolean[] chosen = new boolean[3];
+    Set<Integer> chosen = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_head_specific);
-        for(int i = 0; i < 3; i++){
-            chosen[i] = false;
-        }
     }
 
     public void onClickButton(View view){
         int id = view.getId();
         Button button = findViewById(id);
 
-        if(!chosen[id - R.id.s1]) {
+        if(!chosen.contains(id)) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
             button.setTextColor(Color.WHITE);
-            chosen[id - R.id.s1] = true;
+            chosen.add(id);
         } else {
             button.setBackgroundResource(R.drawable.my_button_released);
             button.setTextColor(Color.BLACK);
-            chosen[id - R.id.s1] = false;
+            chosen.remove(id);
         }
     }
 }
