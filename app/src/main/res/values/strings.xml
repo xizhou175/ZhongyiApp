@@ -4,4 +4,5 @@
     <string name="front">正面</string>
     <string name="back">反面</string>
     <string name="head">头部</string>
+    <string name="head_specific">头部症状</string>
 </resources>

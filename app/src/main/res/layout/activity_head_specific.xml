@@ -1,9 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HeadSpecificActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/titleHead"
+        android:layout_width="159dp"
+        android:layout_height="28dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/head_specific"
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/s1"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/s2"
+        android:layout_toLeftOf="@id/s2"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="" />
+
+    <Button
+        android:id="@+id/s2"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/titleHead"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="" />
+
+    <Button
+        android:id="@+id/s3"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/s2"
+        android:layout_toRightOf="@id/s2"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="" />
+
+
+</RelativeLayout>
