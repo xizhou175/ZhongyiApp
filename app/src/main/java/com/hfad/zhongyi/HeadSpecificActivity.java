@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.Arrays;
 
 public class HeadSpecificActivity extends Activity {
 
@@ -27,6 +26,7 @@ public class HeadSpecificActivity extends Activity {
             else button.setBackgroundResource(R.drawable.my_button_released);
             id += 1;
         }
+
     }
 
 //    @Override

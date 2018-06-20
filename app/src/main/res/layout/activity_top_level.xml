@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/bodyview"
+        android:id="@+id/bodyView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#fafafa"
