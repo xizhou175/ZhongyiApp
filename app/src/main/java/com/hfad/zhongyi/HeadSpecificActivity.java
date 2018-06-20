@@ -10,28 +10,29 @@ import android.widget.Button;
 
 public class HeadSpecificActivity extends AppCompatActivity {
 
-    boolean[] click = new boolean[3];
+    boolean[] chosen = new boolean[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_head_specific);
         for(int i = 0; i < 3; i++){
-            click[i] = false;
+            chosen[i] = false;
         }
     }
 
     public void onClickButton(View view){
-        int id=view.getId();
-        Button button = (Button) findViewById(id);
+        int id = view.getId();
+        Button button = findViewById(id);
 
-        if(click[id - R.id.s1] == false) {
+        if(!chosen[id - R.id.s1]) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
-            click[id - R.id.s1] = true ;
-        }
-        else {
+            button.setTextColor(Color.WHITE);
+            chosen[id - R.id.s1] = true;
+        } else {
             button.setBackgroundResource(R.drawable.my_button_released);
-            click[id - R.id.s1] = false;
+            button.setTextColor(Color.BLACK);
+            chosen[id - R.id.s1] = false;
         }
     }
 }
