@@ -25,7 +25,7 @@
         android:layout_marginRight="15dp"
         android:background="@drawable/my_button_released"
         android:onClick="onClickButton"
-        android:text="" />
+        android:text="@string/headache" />
 
     <Button
         android:id="@+id/s2"
@@ -36,7 +36,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/my_button_released"
         android:onClick="onClickButton"
-        android:text="" />
+        android:text="@string/headache" />
 
     <Button
         android:id="@+id/s3"
@@ -47,7 +47,39 @@
         android:layout_marginLeft="15dp"
         android:background="@drawable/my_button_released"
         android:onClick="onClickButton"
-        android:text="" />
+        android:text="@string/headache" />
 
+    <Button
+        android:id="@+id/s5"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/s2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="@string/headache" />
+
+    <Button
+        android:id="@+id/s4"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/s1"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@id/s1"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="@string/headache" />
+
+    <Button
+        android:id="@+id/s6"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/s3"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@id/s3"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton"
+        android:text="@string/headache" />
 
 </RelativeLayout>

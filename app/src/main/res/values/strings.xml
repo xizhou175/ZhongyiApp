@@ -5,4 +5,5 @@
     <string name="back">反面</string>
     <string name="head">头部</string>
     <string name="head_specific">头部症状</string>
+    <string name="headache">头痛</string>
 </resources>
