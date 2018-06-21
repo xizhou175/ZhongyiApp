@@ -1,72 +1,37 @@
 package com.hfad.zhongyi;
 
-import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+public class HeadSpecificActivity extends AppCompatActivity {
 
-public class HeadSpecificActivity extends Activity {
-
-    Page head_page = Pages.pages[0];
+    boolean[] click = new boolean[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_head_specific);
-
-        int id = R.id.s1;
-        for (int i = 0; i < head_page.getChosen().length; i++) {
-            Button button = findViewById(id);
-            if (head_page.getChosen()[id - R.id.s1]) {
-                button.setBackgroundResource(R.drawable.my_button_pressed);
-            }
-            else button.setBackgroundResource(R.drawable.my_button_released);
-            id += 1;
+        for(int i = 0; i < 3; i++){
+            click[i] = false;
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState){
-//        savedInstanceState.putBooleanArray("chosen", chosen);
-//    }
-
-//    @Override
-//    public void onStop(){
-//        super.onStop();
-//        wasChosen = chosen;
-//    }
-//
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//        chosen = wasChosen;
-//    }
-
-//    @Override
-//    public void onPause(){
-//        super.onPause();
-//        wasChosen = chosen;
-//    }
-//
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//        chosen = wasChosen;
-//    }
-
     public void onClickButton(View view){
-        int id = view.getId();
-        Button button = findViewById(id);
+        int id=view.getId();
+        Button button = (Button) findViewById(id);
 
-        if(!head_page.getChosen()[id - R.id.s1]) {
+        if(click[id - R.id.s1] == false) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
+            click[id - R.id.s1] = true ;
         }
         else {
             button.setBackgroundResource(R.drawable.my_button_released);
+            click[id - R.id.s1] = false;
         }
-        head_page.setChosen(id - R.id.s1);
     }
-
-
 }
