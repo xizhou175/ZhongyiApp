@@ -8,9 +8,7 @@ import android.widget.Button;
 
 public class HeadSpecificActivity extends Activity {
 
-    //private boolean[] chosen = new boolean[3];
-    //private boolean[] wasChosen = new boolean[3];
-    Pages head_page = Pages.pages[0];
+    Page head_page = Pages.pages[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +17,13 @@ public class HeadSpecificActivity extends Activity {
 
         int id = R.id.s1;
         for (int i = 0; i < head_page.getChosen().length; i++) {
-            Button button = (Button) findViewById(id);
+            Button button = findViewById(id);
             if (head_page.getChosen()[id - R.id.s1]) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
             }
             else button.setBackgroundResource(R.drawable.my_button_released);
             id += 1;
         }
-
     }
 
 //    @Override
@@ -60,9 +57,9 @@ public class HeadSpecificActivity extends Activity {
 
     public void onClickButton(View view){
         int id = view.getId();
-        Button button = (Button) findViewById(id);
+        Button button = findViewById(id);
 
-        if(head_page.getChosen()[id - R.id.s1] == false) {
+        if(!head_page.getChosen()[id - R.id.s1]) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
         }
         else {

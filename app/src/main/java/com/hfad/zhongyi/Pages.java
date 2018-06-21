@@ -1,14 +1,10 @@
 package com.hfad.zhongyi;
 
-public class Pages {
+class Page {
     private boolean chosen[];
     private String description;
 
-    public static Pages[] pages = {
-        new Pages("head",6)
-    };
-
-    private Pages(String des, int numOfsym){
+    Page(String des, int numOfsym){
         this.description = des;
         boolean chosen_init[] = new boolean[numOfsym];
         this.chosen = chosen_init;
@@ -26,7 +22,13 @@ public class Pages {
     }
 
     public void setChosen(int id){
-        if(chosen[id]) chosen[id] = false;
+        if (chosen[id]) chosen[id] = false;
         else chosen[id] = true;
     }
+}
+
+class Pages {
+    public static Page[] pages = {
+        new Page("head", 6)
+    };
 }
