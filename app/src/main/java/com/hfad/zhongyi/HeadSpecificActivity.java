@@ -1,6 +1,7 @@
 package com.hfad.zhongyi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,21 +9,23 @@ import android.widget.Button;
 
 public class HeadSpecificActivity extends Activity {
 
-    Page head_page = Pages.pages[0];
+    Page headPage = Pages.pages[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_head_specific);
 
-        int id = R.id.s1;
-        for (int i = 0; i < head_page.getChosen().length; i++) {
+        for (Integer id : headPage.getId2symptom().keySet()) {
+            //int id = headPage.getId2symptom().get(key);
             Button button = findViewById(id);
-            if (head_page.getChosen()[id - R.id.s1]) {
+            //System.out.println(id);
+            if(headPage.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
             }
-            else button.setBackgroundResource(R.drawable.my_button_released);
-            id += 1;
+            else{
+                button.setBackgroundResource(R.drawable.my_button_released);
+            }
         }
     }
 
@@ -58,15 +61,22 @@ public class HeadSpecificActivity extends Activity {
     public void onClickButton(View view){
         int id = view.getId();
         Button button = findViewById(id);
-
-        if(!head_page.getChosen()[id - R.id.s1]) {
+        //String symptom = button.getText().toString();
+        //System.out.println(symptom);
+        if(!headPage.getChosen().contains(id)) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
+            headPage.getChosen().add(id);
         }
         else {
             button.setBackgroundResource(R.drawable.my_button_released);
+            headPage.getChosen().remove(id);
         }
-        head_page.setChosen(id - R.id.s1);
+
     }
 
+    public void onClickSummary(View view){
+        Intent intent = new Intent(this, SummaryOfSymptoms.class);
+        startActivity(intent);
+    }
 
 }
