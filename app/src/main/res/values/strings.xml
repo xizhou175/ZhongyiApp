@@ -6,4 +6,5 @@
     <string name="head">头部</string>
     <string name="head_specific">头部症状</string>
     <string name="headache">头痛</string>
+    <string name="summary">症狀總結</string>
 </resources>
