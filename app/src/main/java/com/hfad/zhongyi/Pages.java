@@ -6,15 +6,17 @@ import java.util.HashSet;
 class Page {
     private String description;
     HashMap<Integer, String> id2symptom = new HashMap<>();
+    HashMap<String, Integer> symptom2id = new HashMap<>();
     HashSet<Integer> chosen = new HashSet<Integer>();
 
     Page(String des, int numOfsym){
 
         if(des.equals("head")){
-            String[] symptoms = {"头痛", "头扁", "头胀", "头晕", "头", "头硬"};
+            String[] symptoms = {"头痛", "头扁", "头胀", "头", "头晕", "头硬"};
             int id = R.id.head_s1;
             for(int i = 0; i < numOfsym; i++){
                 id2symptom.put(id, symptoms[i]);
+                symptom2id.put(symptoms[i], id);
                 id += 1;
             }
         }
@@ -30,6 +32,10 @@ class Page {
 
     public HashMap<Integer, String> getId2symptom() {
         return this.id2symptom;
+    }
+
+    public HashMap<String, Integer> getSymptom2id(){
+        return this.symptom2id;
     }
 
     public void setChosen(Integer id){
