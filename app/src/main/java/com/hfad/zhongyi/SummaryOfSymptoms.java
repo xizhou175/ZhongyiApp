@@ -17,7 +17,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_of_symptoms);
-        parentLinearLayout = (LinearLayout)findViewById(R.id.parent_linear_layout);
+        parentLinearLayout = findViewById(R.id.parent_linear_layout);
     }
 
     public void onDelete(View view){
