@@ -35,7 +35,7 @@ public class TopLevelActivity extends AppCompatActivity {
     }
 
     public void onClickHead(View view) {
-        Intent intent = new Intent(this, CameraActivity.class);
+        Intent intent = new Intent(this, HeadSpecificActivity.class);
         startActivity(intent);
     }
 }

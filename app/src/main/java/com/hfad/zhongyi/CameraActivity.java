@@ -42,18 +42,48 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         requestCameraPermissionIfNotGranted();
         requestStoragePermissionIfNotGranted();
     }
 
     @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        super.onResume();
+        if (mCamera != null) {
+            try {
+                mCamera.reconnect();
+                mCamera.startPreview();
+            } catch (RuntimeException e) {
+                Log.d(TAG, "RuntimeException on Resume: " + e.getMessage());
+                startCamera();
+            } catch (IOException e) {
+                Log.d(TAG, "IOException on Resume: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
     protected void onStop() {
+        Log.d(TAG, "onStop");
         super.onStop();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         releaseCameraAndPreview();
     }
 
@@ -94,12 +124,12 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     public void takePicture(View view) {
-        // mCamera.takePicture(null, null, mPicture);
-        Bitmap captured = mPreview.getBitmap();
-        Matrix matrix = new Matrix();
-        matrix.setScale(10, 10 );
-        captured = Bitmap.createBitmap(captured, 0, 0, captured.getWidth(), captured.getHeight(), matrix, true);
-        mPicture.saveBitMap(captured);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mCamera.takePicture(null, null, mPicture);
+            }
+        }).start();
     }
 
     private void scalePreview() {
@@ -230,11 +260,12 @@ class TexturePreview extends TextureView implements TextureView.SurfaceTextureLi
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
         Log.d(TAG, "Starting preview");
         try {
-            mCamera.reconnect();
             mCamera.setPreviewTexture(surfaceTexture);
             mCamera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+        } catch (RuntimeException e) {
+            Log.d(TAG, "Run time exception: " + e.getMessage());
         }
     }
 
@@ -245,8 +276,6 @@ class TexturePreview extends TextureView implements TextureView.SurfaceTextureLi
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-        mCamera.stopPreview();
-        mCamera.release();
         return true;
     }
 
@@ -288,23 +317,6 @@ class PictureHandler implements Camera.PictureCallback {
             camera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Exception reconnect camera");
-        }
-    }
-
-    public void saveBitMap(Bitmap bitmap) {
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null){
-            Log.d(TAG, "Error creating media file, check storage permissions: ");
-            return;
-        }
-        try {
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
         }
     }
 
