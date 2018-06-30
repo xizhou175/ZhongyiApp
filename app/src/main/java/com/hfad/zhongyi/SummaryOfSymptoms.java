@@ -3,6 +3,7 @@ package com.hfad.zhongyi;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -22,13 +23,13 @@ import java.util.HashSet;
 
 public class SummaryOfSymptoms extends AppCompatActivity {
 
-    private LinearLayout parentTableLayout;
+    private LinearLayout parentLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_of_symptoms);
-        parentTableLayout = findViewById(R.id.table_layout);
+        parentLinearLayout = findViewById(R.id.parent_layout);
         addViews();
     }
 
@@ -49,8 +50,8 @@ public class SummaryOfSymptoms extends AppCompatActivity {
             }
         }
         System.out.println(symptom);
-        parentTableLayout.removeView((View)view.getParent());
-        if(parentTableLayout.getChildCount() == 0){
+        parentLinearLayout.removeView((View)view.getParent());
+        if(parentLinearLayout.getChildCount() == 1){
             Intent i = new Intent(this, TopLevelActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
@@ -67,7 +68,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
                 final View rowView = inflater.inflate(R.layout.row, null);
                 TextView textView = rowView.findViewById(R.id.symptom);
                 textView.setText(id2symptom.get(key));
-                parentTableLayout.addView(rowView, parentTableLayout.getChildCount() - 1);
+                parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
             }
         }
     }
