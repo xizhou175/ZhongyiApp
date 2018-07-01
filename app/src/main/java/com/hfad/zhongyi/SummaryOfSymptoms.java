@@ -3,6 +3,7 @@ package com.hfad.zhongyi;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,7 +31,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_of_symptoms);
-        parentLinearLayout = findViewById(R.id.parent_layout);
+        parentLinearLayout = findViewById(R.id.linear_layout);
         addViews();
     }
 
@@ -51,7 +53,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         }
         System.out.println(symptom);
         parentLinearLayout.removeView((View)view.getParent());
-        if(parentLinearLayout.getChildCount() == 1){
+        if(parentLinearLayout.getChildCount() == 0){
             Intent i = new Intent(this, TopLevelActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
@@ -71,5 +73,11 @@ public class SummaryOfSymptoms extends AppCompatActivity {
                 parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
             }
         }
+    }
+
+    public void addSymptoms(View view){
+        Intent i = new Intent(this, TopLevelActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 }

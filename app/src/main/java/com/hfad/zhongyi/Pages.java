@@ -20,6 +20,16 @@ class Page {
                 id += 1;
             }
         }
+
+        if(des.equals("chest")){
+            String[] symptoms = {"1", "2", "3", "4", "5", "6"};
+            int id = R.id.chest_s1;
+            for(int i = 0; i < symptoms.length; i++){
+                id2symptom.put(id, symptoms[i]);
+                symptom2id.put(symptoms[i], id);
+                id += 1;
+            }
+        }
     }
 
     public String getDescription(){
@@ -50,7 +60,7 @@ class Page {
 
 class Pages {
     public static Page[] pages = {
-        new Page("head")
+        new Page("head"),
+        new Page("chest")
     };
-
 }

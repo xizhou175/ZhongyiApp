@@ -8,6 +8,7 @@ import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,8 +35,14 @@ public class TopLevelActivity extends AppCompatActivity {
         front = !front;
     }
 
-    public void onClickHead(View view) {
+    public void onClick(View view) {
         Intent intent = new Intent(this, HeadSpecificActivity.class);
+        if(view.getId() == R.id.headText) {
+            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "0");
+        }
+        else if(view.getId() == R.id.chestText){
+            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "1");
+        }
         startActivity(intent);
     }
 }
