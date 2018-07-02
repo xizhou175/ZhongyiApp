@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-
-public class HeadSpecificActivity extends Activity {
-
+public class BodySpecificActivity extends Activity{
     private int pageNum = 0;
     private Page page = Pages.pages[pageNum];
     public static final String EXTRA_MESSAGE = "message";
@@ -31,7 +29,7 @@ public class HeadSpecificActivity extends Activity {
             setContentView(R.layout.activity_back_specific);
         }
 
-        setPage(pageNum);
+        page = Pages.pages[pageNum];
         for (Integer id : page.getId2symptom().keySet()) {
             //int id = page.getId2symptom().get(key);
             Button button = findViewById(id);
@@ -43,11 +41,6 @@ public class HeadSpecificActivity extends Activity {
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
         }
-    }
-
-
-    public void setPage(int num){
-        page = Pages.pages[pageNum];
     }
 
     @Override
