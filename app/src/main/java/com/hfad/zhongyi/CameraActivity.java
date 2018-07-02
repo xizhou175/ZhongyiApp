@@ -39,6 +39,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private PictureHandler mPicture;
     private ImageView mImageView;
     private Callable<Void> showButtonsCallBack;
+    private boolean viewingPicture = false;
     private final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     private final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private final String TAG = "CameraActivity";
@@ -72,6 +73,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
             } catch (IOException e) {
                 Log.d(TAG, "IOException on Resume: " + e.getMessage());
             }
+        }
+        if (viewingPicture) {
+            mPreview.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -109,7 +113,16 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     private void continueCameraPreview() {
+        try {
+            mCamera.reconnect();
+            mCamera.startPreview();
+        } catch (IOException e) {
+            Log.d(TAG, "IOException continue camera preview: " + e.getMessage());
+        } catch (RuntimeException e) {
+            Log.d(TAG, "Runtime Exception continue camera preview: " + e.getMessage());
+        }
         // hide imagePreview
+        mImageView.setImageResource(android.R.color.transparent);
         mImageView.setVisibility(View.INVISIBLE);
         // show texturePreview
         mPreview.setVisibility(View.VISIBLE);
@@ -119,25 +132,19 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         // show take pic button
         Button button = findViewById(R.id.button_take_pic);
         button.setVisibility(View.VISIBLE);
-        try {
-            mCamera.reconnect();
-            mCamera.startPreview();
-        } catch (IOException e) {
-            Log.d(TAG, "Exception continue camera preview: " + e.getMessage());
-        }
+        viewingPicture = false;
     }
 
     private void showButtons() {
         // hide textureView
         mPreview.setVisibility(View.INVISIBLE);
-        // show imageView
-        mImageView.setVisibility(View.VISIBLE);
         // show cancel/accept buttons
         RelativeLayout buttonLayout = findViewById(R.id.button_layout);
         buttonLayout.setVisibility(View.VISIBLE);
         // hide take pic button
         Button button = findViewById(R.id.button_take_pic);
         button.setVisibility(View.INVISIBLE);
+        viewingPicture = true;
     }
 
     private void requestCameraPermissionIfNotGranted() {
