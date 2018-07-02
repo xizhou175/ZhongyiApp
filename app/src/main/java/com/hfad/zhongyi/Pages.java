@@ -20,6 +20,26 @@ class Page {
                 id += 1;
             }
         }
+
+        else if(des.equals("chest")){
+            String[] symptoms = {"1", "2", "3", "4", "5", "6"};
+            int id = R.id.chest_s1;
+            for(int i = 0; i < symptoms.length; i++){
+                id2symptom.put(id, symptoms[i]);
+                symptom2id.put(symptoms[i], id);
+                id += 1;
+            }
+        }
+
+        else if(des.equals("back")){
+            String[] symptoms = {"背1", "背2", "背3", "背4", "背5", "背6"};
+            int id = R.id.back_s1;
+            for(int i = 0; i < symptoms.length; i++){
+                id2symptom.put(id, symptoms[i]);
+                symptom2id.put(symptoms[i], id);
+                id += 1;
+            }
+        }
     }
 
     public String getDescription(){
@@ -50,7 +70,8 @@ class Page {
 
 class Pages {
     public static Page[] pages = {
-        new Page("head")
+        new Page("head"),
+        new Page("chest"),
+        new Page("back")
     };
-
 }

@@ -6,21 +6,35 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-
-public class HeadSpecificActivity extends Activity {
-
-    Page headPage = Pages.pages[0];
+public class BodySpecificActivity extends Activity{
+    private int pageNum = 0;
+    private Page page = Pages.pages[pageNum];
+    public static final String EXTRA_MESSAGE = "message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_head_specific);
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(EXTRA_MESSAGE);
+        System.out.println(message);
+        pageNum = Integer.parseInt(message);
+        System.out.println(pageNum );
+        if(pageNum == 0) {
+            setContentView(R.layout.activity_head_specific);
+        }
+        else if(pageNum == 1){
+            setContentView(R.layout.activity_chest_specific);
+        }
+        else if(pageNum == 2){
+            setContentView(R.layout.activity_back_specific);
+        }
 
-        for (Integer id : headPage.getId2symptom().keySet()) {
-            //int id = headPage.getId2symptom().get(key);
+        page = Pages.pages[pageNum];
+        for (Integer id : page.getId2symptom().keySet()) {
+            //int id = page.getId2symptom().get(key);
             Button button = findViewById(id);
             //System.out.println(id);
-            if(headPage.getChosen().contains(id)) {
+            if(page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
             }
             else{
@@ -29,46 +43,19 @@ public class HeadSpecificActivity extends Activity {
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState){
-//        savedInstanceState.putBooleanArray("chosen", chosen);
-//    }
-
-//      @Override
-//      public void onStop(){
-//          super.onStop();
-//      }
-//
-//      @Override
-//      public void onStart(){
-//          super.onStart();
-//          for (Integer id : headPage.getId2symptom().keySet()) {
-//              //int id = headPage.getId2symptom().get(key);
-//              Button button = findViewById(id);
-//              //System.out.println(id);
-//              if(headPage.getChosen().contains(id)) {
-//                  button.setBackgroundResource(R.drawable.my_button_pressed);
-//              }
-//              else{
-//                  button.setBackgroundResource(R.drawable.my_button_released);
-//              }
-//          }
-//      }
-
     @Override
     public void onPause(){
         super.onPause();
-
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        for (Integer id : headPage.getId2symptom().keySet()) {
-            //int id = headPage.getId2symptom().get(key);
+        for (Integer id : page.getId2symptom().keySet()) {
+            //int id = page.getId2symptom().get(key);
             Button button = findViewById(id);
             //System.out.println(id);
-            if(headPage.getChosen().contains(id)) {
+            if(page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
             }
             else{
@@ -82,13 +69,13 @@ public class HeadSpecificActivity extends Activity {
         Button button = findViewById(id);
         //String symptom = button.getText().toString();
         //System.out.println(symptom);
-        if(!headPage.getChosen().contains(id)) {
+        if(!page.getChosen().contains(id)) {
             button.setBackgroundResource(R.drawable.my_button_pressed);
-            headPage.getChosen().add(id);
+            page.getChosen().add(id);
         }
         else {
             button.setBackgroundResource(R.drawable.my_button_released);
-            headPage.getChosen().remove(id);
+            page.getChosen().remove(id);
         }
 
     }
