@@ -8,6 +8,7 @@ import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,15 +28,28 @@ public class TopLevelActivity extends AppCompatActivity {
         if(front) {
             imageView.setImageResource(R.drawable.cappuccino);
             findViewById(R.id.headText).setVisibility(View.INVISIBLE);
+            findViewById(R.id.chestText).setVisibility(View.INVISIBLE);
+            findViewById(R.id.backText).setVisibility(View.VISIBLE);
         } else {
             imageView.setImageResource(R.drawable.body);
             findViewById(R.id.headText).setVisibility(View.VISIBLE);
+            findViewById(R.id.chestText).setVisibility(View.VISIBLE);
+            findViewById(R.id.backText).setVisibility(View.INVISIBLE);
         }
         front = !front;
     }
 
-    public void onClickHead(View view) {
-        Intent intent = new Intent(this, HeadSpecificActivity.class);
+    public void onClick(View view) {
+        Intent intent = new Intent(this, BodySpecificActivity.class);
+        if(view.getId() == R.id.headText) {
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "0");
+        }
+        else if(view.getId() == R.id.chestText){
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "1");
+        }
+        else if(view.getId() == R.id.backText){
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "2");
+        }
         startActivity(intent);
     }
 }
