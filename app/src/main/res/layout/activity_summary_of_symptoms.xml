@@ -10,7 +10,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button2">
+        android:layout_above="@id/button_layout"
+        android:layout_alignParentTop="true"
+        android:id="@+id/scrollView">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,10 +27,16 @@
         </LinearLayout>
     </ScrollView>
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/button_layout"
+    android:orientation="horizontal"
+    android:layout_alignParentBottom="true">
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:onClick="goToCamera"
         android:text="相機"
         android:visibility="visible"
@@ -37,10 +45,12 @@
     <Button
         android:id="@+id/add_button"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:onClick="addSymptoms"
+        android:layout_marginLeft="210dp"
         android:text="添加"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
+</LinearLayout>
 
 </RelativeLayout>

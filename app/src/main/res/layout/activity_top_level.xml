@@ -74,5 +74,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
+    <TextView
+        android:id="@+id/backText"
+        android:layout_width="38dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginTop="95dp"
+        android:onClick="onClick"
+        android:text="@string/back"
+        android:textColor="@android:color/holo_blue_light"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
 
 </android.support.constraint.ConstraintLayout>

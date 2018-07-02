@@ -27,6 +27,9 @@ public class HeadSpecificActivity extends Activity {
         else if(pageNum == 1){
             setContentView(R.layout.activity_chest_specific);
         }
+        else if(pageNum == 2){
+            setContentView(R.layout.activity_back_specific);
+        }
 
         setPage(pageNum);
         for (Integer id : page.getId2symptom().keySet()) {

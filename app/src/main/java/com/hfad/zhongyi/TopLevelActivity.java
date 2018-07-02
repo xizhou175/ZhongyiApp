@@ -28,9 +28,13 @@ public class TopLevelActivity extends AppCompatActivity {
         if(front) {
             imageView.setImageResource(R.drawable.cappuccino);
             findViewById(R.id.headText).setVisibility(View.INVISIBLE);
+            findViewById(R.id.chestText).setVisibility(View.INVISIBLE);
+            findViewById(R.id.backText).setVisibility(View.VISIBLE);
         } else {
             imageView.setImageResource(R.drawable.body);
             findViewById(R.id.headText).setVisibility(View.VISIBLE);
+            findViewById(R.id.chestText).setVisibility(View.VISIBLE);
+            findViewById(R.id.backText).setVisibility(View.INVISIBLE);
         }
         front = !front;
     }
@@ -42,6 +46,9 @@ public class TopLevelActivity extends AppCompatActivity {
         }
         else if(view.getId() == R.id.chestText){
             intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "1");
+        }
+        else if(view.getId() == R.id.backText){
+            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "2");
         }
         startActivity(intent);
     }
