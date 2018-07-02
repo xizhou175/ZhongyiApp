@@ -94,7 +94,7 @@ public class HeadSpecificActivity extends Activity {
     }
 
     public void onClickSummary(View view){
-        Intent intent = new Intent(this, SummaryOfSymptoms.class);
+        Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
 
