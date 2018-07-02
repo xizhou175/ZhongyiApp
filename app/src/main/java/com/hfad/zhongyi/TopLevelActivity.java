@@ -40,15 +40,15 @@ public class TopLevelActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        Intent intent = new Intent(this, HeadSpecificActivity.class);
+        Intent intent = new Intent(this, BodySpecificActivity.class);
         if(view.getId() == R.id.headText) {
-            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "0");
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "0");
         }
         else if(view.getId() == R.id.chestText){
-            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "1");
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "1");
         }
         else if(view.getId() == R.id.backText){
-            intent.putExtra(HeadSpecificActivity.EXTRA_MESSAGE, "2");
+            intent.putExtra(BodySpecificActivity.EXTRA_MESSAGE, "2");
         }
         startActivity(intent);
     }
