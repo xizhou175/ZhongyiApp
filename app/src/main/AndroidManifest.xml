@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".CameraActivity" android:screenOrientation="portrait" />
         <activity android:name=".SummaryOfSymptoms" />
+        <activity android:name=".BodyPartsActivity" />
     </application>
 
 </manifest>

@@ -8,38 +8,52 @@ class Page {
     HashMap<Integer, String> id2symptom = new HashMap<>();
     HashMap<String, Integer> symptom2id = new HashMap<>();
     HashSet<Integer> chosen = new HashSet<Integer>();
+    HashSet<String> symptoms = new HashSet<>();
 
     Page(String des){
 
         if(des.equals("head")){
-            String[] symptoms = {"头痛", "头扁", "头胀", "头", "头晕", "头硬"};
-            int id = R.id.head_s1;
-            for(int i = 0; i < symptoms.length; i++){
-                id2symptom.put(id, symptoms[i]);
-                symptom2id.put(symptoms[i], id);
+            String[] headSymptoms = {"头1", "头2", "头3"};
+            for(int i = 0; i < headSymptoms.length; i++){
+                symptoms.add(headSymptoms[i]);
+            }
+            int id = R.id.s1;
+            for(String key : symptoms){
+                id2symptom.put(id, key);
+                symptom2id.put(key, id);
                 id += 1;
             }
         }
 
         else if(des.equals("chest")){
-            String[] symptoms = {"1", "2", "3", "4", "5", "6"};
-            int id = R.id.chest_s1;
-            for(int i = 0; i < symptoms.length; i++){
-                id2symptom.put(id, symptoms[i]);
-                symptom2id.put(symptoms[i], id);
+            String[] chestSymptoms = {"胸1", "胸2", "胸3"};
+            for(int i = 0; i < chestSymptoms.length; i++){
+                symptoms.add(chestSymptoms[i]);
+            }
+            int id = R.id.s1;
+            for(String key : symptoms){
+                id2symptom.put(id, key);
+                symptom2id.put(key, id);
                 id += 1;
             }
         }
 
         else if(des.equals("back")){
-            String[] symptoms = {"背1", "背2", "背3", "背4", "背5", "背6"};
-            int id = R.id.back_s1;
-            for(int i = 0; i < symptoms.length; i++){
-                id2symptom.put(id, symptoms[i]);
-                symptom2id.put(symptoms[i], id);
+            String[] backSymptoms = {"背1", "背2", "背3"};
+            for(int i = 0; i < backSymptoms.length; i++){
+                symptoms.add(backSymptoms[i]);
+            }
+            int id = R.id.s1;
+            for(String key : symptoms){
+                id2symptom.put(id, key);
+                symptom2id.put(key, id);
                 id += 1;
             }
         }
+    }
+
+    public HashSet<String> getSymptoms(){
+        return this.symptoms;
     }
 
     public String getDescription(){

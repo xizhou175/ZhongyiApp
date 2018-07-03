@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="159dp"
+        android:layout_height="28dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/s1"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/s2"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@id/s2"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton" />
+
+    <Button
+        android:id="@+id/s2"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton" />
+
+    <Button
+        android:id="@+id/s3"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/s2"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/s2"
+        android:background="@drawable/my_button_released"
+        android:onClick="onClickButton" />
+
+</RelativeLayout>
