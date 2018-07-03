@@ -81,7 +81,7 @@ public class BodySpecificActivity extends Activity{
     }
 
     public void onClickSummary(View view){
-        Intent intent = new Intent(this, CameraActivity.class);
+        Intent intent = new Intent(this, SummaryOfSymptoms.class);
         startActivity(intent);
     }
 
