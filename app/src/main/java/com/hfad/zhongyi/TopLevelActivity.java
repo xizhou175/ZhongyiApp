@@ -52,7 +52,6 @@ public class TopLevelActivity extends AppCompatActivity {
         else if(view.getId() == R.id.backText) {
             intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "2");
         }
-
         startActivity(intent);
     }
 }
