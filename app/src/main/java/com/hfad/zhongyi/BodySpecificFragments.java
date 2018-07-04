@@ -1,74 +1,63 @@
 package com.hfad.zhongyi;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
-public class BodySpecificFragments extends Fragment{
+public class BodySpecificFragments extends Fragment implements View.OnClickListener {
 
-    private int pageNum = 0;
-    private Page page = Pages.pages[pageNum];
+    private int pageNum = -1;
+    private Page page = null;
+
+    public static BodySpecificFragments newInstance(int pg) {
+        Bundle args = new Bundle();
+        args.putInt("pageNum", pg);
+        BodySpecificFragments frag = new BodySpecificFragments();
+        frag.setArguments(args);
+        return frag;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
+        View view = inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            pageNum = bundle.getInt("pageNum");
+            page = Pages.pages[pageNum];
+        }
+        setPageTitle(view);
+        LinearLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
+        if (pageNum != -1 && page != null) { // only inflate when we receive the pageNum arg and init page obj
+            inflateButtons(buttonsLayout);
+        }
+        return view;
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        View view = getView();
-        page = Pages.pages[pageNum];
-        this.setTitle(view);
-        this.setText(view);
-        System.out.println(pageNum);
-        for (Integer id : page.getId2symptom().keySet()) {
-            Button button = view.findViewById(id);
+    private void inflateButtons(LinearLayout layout) {
+        HashMap<Integer, String> map = page.getId2symptom();
+        for (Integer id : map.keySet()) {
+            Button button = new Button(layout.getContext());
+            button.setText(map.get(id));
+            button.setId(id);
             if(page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
-            }
-            else{
+            } else {
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
+            button.setOnClickListener(this);
+            layout.addView(button);
         }
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        View view = getView();
-        for (Integer id : page.getId2symptom().keySet()) {
-            //int id = page.getId2symptom().get(key);
-            Button button = view.findViewById(id);
-            //System.out.println(id);
-            if(page.getChosen().contains(id)) {
-                button.setBackgroundResource(R.drawable.my_button_pressed);
-            }
-            else{
-                button.setBackgroundResource(R.drawable.my_button_released);
-            }
-        }
-    }
-
-
-    public void setPageNum(int num){
-        this.pageNum = num;
-    }
-
-    //set page title
-    public void setTitle(View view){
+    public void setPageTitle(View view){
         if(view != null){
             TextView title = view.findViewById(R.id.title);
             if(pageNum == 0){
@@ -83,14 +72,17 @@ public class BodySpecificFragments extends Fragment{
         }
     }
 
-    //set text on buttons
-    public void setText(View view){
-        HashSet<String> symptoms = page.getSymptoms();
-        int id = R.id.s1;
-        for(String key : symptoms){
-            Button button = view.findViewById(id++);
-            button.setText(key);
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        Button button = view.findViewById(id);
+        if(!page.getChosen().contains(id)) {
+            button.setBackgroundResource(R.drawable.my_button_pressed);
+            page.getChosen().add(id);
+        }
+        else {
+            button.setBackgroundResource(R.drawable.my_button_released);
+            page.getChosen().remove(id);
         }
     }
-
 }
