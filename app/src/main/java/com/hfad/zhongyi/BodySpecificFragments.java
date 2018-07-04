@@ -7,8 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class BodySpecificFragments extends Fragment{
@@ -27,9 +31,9 @@ public class BodySpecificFragments extends Fragment{
         View view = getView();
         page = Pages.pages[pageNum];
         this.setTitle(view);
-        this.setText(view);
-        System.out.println(pageNum);
-        for (Integer id : page.getId2symptom().keySet()) {
+        this.addButtons(view);
+        //this.setText(view);
+        /*for (Integer id : page.getId2symptom().keySet()) {
             Button button = view.findViewById(id);
             if(page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
@@ -37,7 +41,7 @@ public class BodySpecificFragments extends Fragment{
             else{
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
-        }
+        }*/
     }
 
     @Override
@@ -49,7 +53,7 @@ public class BodySpecificFragments extends Fragment{
     public void onResume(){
         super.onResume();
         View view = getView();
-        for (Integer id : page.getId2symptom().keySet()) {
+        /*for (Integer id : page.getId2symptom().keySet()) {
             //int id = page.getId2symptom().get(key);
             Button button = view.findViewById(id);
             //System.out.println(id);
@@ -59,7 +63,7 @@ public class BodySpecificFragments extends Fragment{
             else{
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
-        }
+        }*/
     }
 
 
@@ -84,13 +88,55 @@ public class BodySpecificFragments extends Fragment{
     }
 
     //set text on buttons
-    public void setText(View view){
+    /*public void setText(View view){
         HashSet<String> symptoms = page.getSymptoms();
         int id = R.id.s1;
         for(String key : symptoms){
             Button button = view.findViewById(id++);
             button.setText(key);
         }
+    }*/
+
+    //add buttons
+    public void addButtons(View view){
+        TextView title = getView().findViewById(R.id.title);
+        RelativeLayout parentLayout = (RelativeLayout) title.getParent();
+        HashMap<Integer, String> id2sym = page.getId2symptom();
+        HashMap<String, Integer> sym2id = page.getSymptom2id();
+        int id = 1;
+        Button lastButton = new Button(view.getContext());
+        for(String key : sym2id.keySet()){
+            Button button = new Button(view.getContext());
+            button.setLayoutParams(new RelativeLayout.LayoutParams(80, 60));
+            button.setId(id);
+            if(id > 1) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) button.getLayoutParams();
+                lp.addRule(RelativeLayout.BELOW, lastButton.getId());
+            }
+            button.setText(key);
+            button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    int id = view.getId();
+                    Button button = view.findViewById(id);
+                    System.out.println(button.getText().toString());
+                    if(!page.getChosen().contains(id)) {
+                        button.setBackgroundResource(R.drawable.my_button_pressed);
+                        page.getChosen().add(id);
+                    }
+                    else {
+                        button.setBackgroundResource(R.drawable.my_button_released);
+                        page.getChosen().remove(id);
+                    }
+                }
+            });
+            lastButton = button;
+            if(parentLayout != null){
+                parentLayout.addView(button);
+            }
+        }
     }
+
+
 
 }
