@@ -1,8 +1,8 @@
 package com.hfad.zhongyi;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +14,22 @@ import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-public class BodySpecificFragments extends Fragment{
+import java.util.HashMap;
 
-    private int pageNum = 0;
-    private Page page = Pages.pages[pageNum];
+public class BodySpecificFragments extends Fragment implements View.OnClickListener {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
+    private int pageNum = -1;
+    private Page page = null;
+
+    public static BodySpecificFragments newInstance(int pg) {
+        Bundle args = new Bundle();
+        args.putInt("pageNum", pg);
+        BodySpecificFragments frag = new BodySpecificFragments();
+        frag.setArguments(args);
+        return frag;
     }
 
     @Override
@@ -30,8 +37,6 @@ public class BodySpecificFragments extends Fragment{
         super.onStart();
         View view = getView();
         page = Pages.pages[pageNum];
-        this.setTitle(view);
-        this.addButtons(view);
         //this.setText(view);
         /*for (Integer id : page.getId2symptom().keySet()) {
             Button button = view.findViewById(id);
@@ -50,29 +55,51 @@ public class BodySpecificFragments extends Fragment{
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         View view = getView();
-        /*for (Integer id : page.getId2symptom().keySet()) {
+        for (Integer id : page.getId2symptom().keySet()) {
             //int id = page.getId2symptom().get(key);
             Button button = view.findViewById(id);
             //System.out.println(id);
-            if(page.getChosen().contains(id)) {
+        }
+    }
+
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            pageNum = bundle.getInt("pageNum");
+            page = Pages.pages[pageNum];
+        }
+        setPageTitle(view);
+        LinearLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
+        if (pageNum != -1 && page != null) { // only inflate when we receive the pageNum arg and init page obj
+            inflateButtons(buttonsLayout);
+        }
+        return view;
+    }
+
+    private void inflateButtons(LinearLayout layout) {
+        HashMap<Integer, String> map = page.getId2symptom();
+        for (Integer id : map.keySet()) {
+            Button button = new Button(layout.getContext());
+            button.setText(map.get(id));
+            button.setId(id);
+
+            if (page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
-            }
-            else{
+            } else {
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
-        }*/
+
+            button.setOnClickListener(this);
+            layout.addView(button);
+        }
     }
 
-
-    public void setPageNum(int num){
-        this.pageNum = num;
-    }
-
-    //set page title
-    public void setTitle(View view){
+    public void setPageTitle(View view){
         if(view != null){
             TextView title = view.findViewById(R.id.title);
             if(pageNum == 0){
@@ -87,56 +114,18 @@ public class BodySpecificFragments extends Fragment{
         }
     }
 
-    //set text on buttons
-    /*public void setText(View view){
-        HashSet<String> symptoms = page.getSymptoms();
-        int id = R.id.s1;
-        for(String key : symptoms){
-            Button button = view.findViewById(id++);
-            button.setText(key);
-        }
-    }*/
 
-    //add buttons
-    public void addButtons(View view){
-        TextView title = getView().findViewById(R.id.title);
-        RelativeLayout parentLayout = (RelativeLayout) title.getParent();
-        HashMap<Integer, String> id2sym = page.getId2symptom();
-        HashMap<String, Integer> sym2id = page.getSymptom2id();
-        int id = 1;
-        Button lastButton = new Button(view.getContext());
-        for(String key : sym2id.keySet()){
-            Button button = new Button(view.getContext());
-            button.setLayoutParams(new RelativeLayout.LayoutParams(80, 60));
-            button.setId(id);
-            if(id > 1) {
-                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) button.getLayoutParams();
-                lp.addRule(RelativeLayout.BELOW, lastButton.getId());
-            }
-            button.setText(key);
-            button.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view){
-                    int id = view.getId();
-                    Button button = view.findViewById(id);
-                    System.out.println(button.getText().toString());
-                    if(!page.getChosen().contains(id)) {
-                        button.setBackgroundResource(R.drawable.my_button_pressed);
-                        page.getChosen().add(id);
-                    }
-                    else {
-                        button.setBackgroundResource(R.drawable.my_button_released);
-                        page.getChosen().remove(id);
-                    }
-                }
-            });
-            lastButton = button;
-            if(parentLayout != null){
-                parentLayout.addView(button);
-            }
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        Button button = view.findViewById(id);
+        if(!page.getChosen().contains(id)) {
+            button.setBackgroundResource(R.drawable.my_button_pressed);
+            page.getChosen().add(id);
+        }
+        else {
+            button.setBackgroundResource(R.drawable.my_button_released);
+            page.getChosen().remove(id);
         }
     }
-
-
-
 }
