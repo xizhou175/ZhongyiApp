@@ -18,25 +18,21 @@ class Page {
             for(int i = 0; i < headSymptoms.length; i++){
                 symptoms.add(headSymptoms[i]);
             }
-            int id = 0;
-            for(String key : symptoms){
+            int id = 1;
+            for(String key : headSymptoms){
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
                 id += 1;
             }
         }
 
-        /*else if(des.equals("chest")){
-=======
         else if(des.equals("chest")) {
-            description = "chest symptoms";
->>>>>>> test#2
-            String[] chestSymptoms = {"胸1", "胸2", "胸3"};
+            String[] chestSymptoms = {"胸1", "胸2", "胸3", "胸4", "胸5", "胸6", "胸7"};
             for(int i = 0; i < chestSymptoms.length; i++){
                 symptoms.add(chestSymptoms[i]);
             }
-            int id = 0;
-            for(String key : symptoms){
+            int id = 1;
+            for(String key : chestSymptoms){
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
                 id += 1;
@@ -48,13 +44,13 @@ class Page {
             for(int i = 0; i < backSymptoms.length; i++){
                 symptoms.add(backSymptoms[i]);
             }
-            int id = 0;
-            for(String key : symptoms){
+            int id = 1;
+            for(String key : backSymptoms){
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
                 id += 1;
             }
-        }*/
+        }
     }
 
     public HashSet<String> getSymptoms() {
@@ -89,6 +85,8 @@ class Page {
 
 class Pages {
     public static Page[] pages = {
-        new Page("head")
+        new Page("head"),
+        new Page("chest"),
+        new Page("back")
     };
 }

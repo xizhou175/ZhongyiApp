@@ -2,6 +2,7 @@ package com.hfad.zhongyi;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.TreeSet;
 
-public class BodySpecificFragments extends Fragment implements View.OnClickListener {
+public class BodySpecificFragments extends Fragment {
 
     private int pageNum = -1;
     private Page page = null;
@@ -32,40 +34,6 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         return frag;
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        View view = getView();
-        page = Pages.pages[pageNum];
-        //this.setText(view);
-        /*for (Integer id : page.getId2symptom().keySet()) {
-            Button button = view.findViewById(id);
-            if(page.getChosen().contains(id)) {
-                button.setBackgroundResource(R.drawable.my_button_pressed);
-            }
-            else{
-                button.setBackgroundResource(R.drawable.my_button_released);
-            }
-        }*/
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        View view = getView();
-        for (Integer id : page.getId2symptom().keySet()) {
-            //int id = page.getId2symptom().get(key);
-            Button button = view.findViewById(id);
-            //System.out.println(id);
-        }
-    }
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
         Bundle bundle = getArguments();
@@ -74,19 +42,41 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             page = Pages.pages[pageNum];
         }
         setPageTitle(view);
-        LinearLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
+        RelativeLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
         if (pageNum != -1 && page != null) { // only inflate when we receive the pageNum arg and init page obj
             inflateButtons(buttonsLayout);
         }
         return view;
     }
 
-    private void inflateButtons(LinearLayout layout) {
+    private void inflateButtons(RelativeLayout layout) {
         HashMap<Integer, String> map = page.getId2symptom();
-        for (Integer id : map.keySet()) {
+        TreeSet<Integer> ts1= new TreeSet<Integer>(map.keySet());
+        int size = map.size();
+        //System.out.println(size);
+        for (int id = 1; id <= size; id++) {
+
+
             Button button = new Button(layout.getContext());
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(120, 90);
             button.setText(map.get(id));
             button.setId(id);
+            int marginTop = 60 + ((id - 1) / 3) * 120;
+            if ((id + 1) % 3 == 0) {
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+                params.setMargins(0, marginTop, 0, 0);
+
+            } else if (id % 3 == 0) {
+                //params.setMargins(0, marginTop, 80, 0);
+                params.setMargins(0, marginTop, 110, 0);
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            }
+            else{
+                params.setMargins(110, marginTop, 0, 0);
+                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            }
+            button.setLayoutParams(params);
+
 
             if (page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
@@ -94,8 +84,22 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                 button.setBackgroundResource(R.drawable.my_button_released);
             }
 
-            button.setOnClickListener(this);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int id = view.getId();
+                    Button button = view.findViewById(id);
+                    if (!page.getChosen().contains(id)) {
+                        button.setBackgroundResource(R.drawable.my_button_pressed);
+                        page.getChosen().add(id);
+                    } else {
+                        button.setBackgroundResource(R.drawable.my_button_released);
+                        page.getChosen().remove(id);
+                    }
+                }
+            });
             layout.addView(button);
+
         }
     }
 
@@ -114,18 +118,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         }
     }
 
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        Button button = view.findViewById(id);
-        if(!page.getChosen().contains(id)) {
-            button.setBackgroundResource(R.drawable.my_button_pressed);
-            page.getChosen().add(id);
-        }
-        else {
-            button.setBackgroundResource(R.drawable.my_button_released);
-            page.getChosen().remove(id);
-        }
+    public void setPageNum(int num){
+        this.pageNum = num;
     }
 }

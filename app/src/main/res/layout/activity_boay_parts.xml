@@ -5,15 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="159dp"
-        android:layout_height="28dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:textSize="20dp" />
-
     <fragment
         android:name="com.hfad.zhongyi.BodySpecificFragments"
         android:id="@+id/symptoms_frag"
