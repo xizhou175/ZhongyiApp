@@ -106,7 +106,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     public void onClickAccept(View view) {
         mPicture.storePicture();
         mCamera.stopPreview();
-        Intent intent = new Intent(this, UploadPage.class);
+        Intent intent = new Intent(this, UploadActivity.class);
         intent.putExtra("imageData", mPicture.getImageData());
         startActivity(intent);
         // destroy this activity
