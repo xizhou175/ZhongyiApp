@@ -3,6 +3,7 @@ package com.hfad.zhongyi;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,8 +56,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 return null;
             }
         };
-        requestCameraPermissionIfNotGranted();
-        requestStoragePermissionIfNotGranted();
+        requestPermissionsIfNotGranted();
     }
 
     @Override
@@ -105,7 +105,13 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
     public void onClickAccept(View view) {
         mPicture.storePicture();
-        continueCameraPreview();
+        mCamera.stopPreview();
+        Intent intent = new Intent(this, UploadActivity.class);
+        intent.putExtra("imageData", mPicture.getImageData());
+        startActivity(intent);
+        // destroy this activity
+        finish();
+        // continueCameraPreview();
     }
 
     public void onClickCancel(View view) {
@@ -136,6 +142,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     private void showButtons() {
+        Log.d(TAG, "showButtons");
         // hide textureView
         mPreview.setVisibility(View.INVISIBLE);
         // show cancel/accept buttons
@@ -147,30 +154,20 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         viewingPicture = true;
     }
 
-    private void requestCameraPermissionIfNotGranted() {
-        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // request the permission
+    private void requestPermissionsIfNotGranted() {
+        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CameraActivity.this,
-                    new String[]{Manifest.permission.CAMERA},
+                    new String[]{
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
                     MY_PERMISSIONS_REQUEST_CAMERA);
-
             // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
             // app-defined int constant. The callback method gets the
             // result of the request.
         } else {
             startCamera();
-        }
-    }
-
-    private void requestStoragePermissionIfNotGranted() {
-        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // request the permission
-            ActivityCompat.requestPermissions(CameraActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-        } else {
             mPicture = new PictureHandler(true, mImageView, showButtonsCallBack);
         }
     }
@@ -368,6 +365,7 @@ class PictureHandler implements Camera.PictureCallback {
         camera.stopPreview();
         previewPicture();
         try {
+            Log.d(TAG, "call show button callback");
             callback.call();
         } catch (Exception e) {
             e.printStackTrace();
@@ -398,19 +396,23 @@ class PictureHandler implements Camera.PictureCallback {
         }
     }
 
+    public byte[] getImageData() {
+        return tmpImageData;
+    }
+
     private File getOutputMediaFile() {
         if (!permitted) {
             return null;
         }
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+                Environment.DIRECTORY_PICTURES), "ZhongyiApp");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d("ZhongyiApp", "failed to create directory");
                 return null;
             }
         }
