@@ -66,10 +66,14 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(this);
+            lv.post(new Runnable(){
+                @Override
+                public void run(){
+                    setListView(lv);
+                }
+            });
             ImageView DropDownSign = view.findViewById(R.id.DropDownSign);
             DropDownSign.setOnClickListener(this);
-
-
         }
 
         return view;
@@ -79,15 +83,20 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
         ColorDrawable colorDrawable = (ColorDrawable)lv.getChildAt(position).getBackground();
+        TextView symtxt = v.findViewById(R.id.symptom);
+        String symptom = symtxt.getText().toString();
+        int symId = page.getSymptom2id().get(symptom);
         if(colorDrawable.getColor() != getResources().getColor(R.color.holo_blue_light)) {
             lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
             ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.if_minus_118643);
+            page.getChosen().add(symId);
         }
         else {
             lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.lightgrey));
             ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.plus);
+            page.getChosen().remove(symId);
         }
     }
 
@@ -96,7 +105,6 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         HashMap<Integer, String> map = page.getId2symptom();
         TreeSet<Integer> ts1= new TreeSet<Integer>(map.keySet());
         int size = map.size();
-        //System.out.println(size);
         for (int id = 1; id <= 6; id++) {
 
 
@@ -174,6 +182,20 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         }
         else{
             lv.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void setListView(ListView lv) {
+        for(int position = 0; position < lv.getChildCount(); position++){
+            View v = lv.getChildAt(position);
+            TextView symView = v.findViewById(R.id.symptom);
+            String symptom = symView.getText().toString();
+            int symId = page.getSymptom2id().get(symptom);
+            if(page.getChosen().contains(symId)){
+                lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
+                ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
+                plusOrMinus.setImageResource(R.drawable.if_minus_118643);
+            }
         }
     }
 

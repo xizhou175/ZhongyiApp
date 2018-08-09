@@ -20,7 +20,7 @@ public class CustomAdapterForDropDown extends ArrayAdapter<DataModel> {
     Context mContext;
 
     public CustomAdapterForDropDown(ArrayList<DataModel> data, Context context){
-        super(context, R.layout.row, data);
+        super(context, R.layout.row_item_dropdown, data);
         this.dataSet = data;
         this.mContext = context;
     }
@@ -42,7 +42,7 @@ public class CustomAdapterForDropDown extends ArrayAdapter<DataModel> {
         if(convertView == null){
             viewHolder = new CustomAdapter.ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.row, parent, false);
+            convertView = inflater.inflate(R.layout.row_item_dropdown, parent, false);
             viewHolder.txtsym = (TextView) convertView.findViewById(R.id.symptom);
             viewHolder.delete = (ImageView)convertView.findViewById(R.id.removeSign);
             result = convertView;

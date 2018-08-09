@@ -29,7 +29,7 @@ class Page {
         }
 
         else if(des.equals("chest")) {
-            String[] chestSymptoms = {"胸1", "胸2", "胸3", "胸4", "胸5", "胸6", "胸7"};
+            String[] chestSymptoms = {"胸闷", "气短", "胸痛", "咳嗽", "咳痰", "脓胸", "血胸", "气胸"};
             for(int i = 0; i < chestSymptoms.length; i++){
                 symptoms.add(chestSymptoms[i]);
             }
@@ -37,9 +37,14 @@ class Page {
             for(String key : chestSymptoms){
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
-                id += 1;
-                otherSymptoms.add(key);
+                if(id++ == 6) break;
             }
+            for(id = 7; id <= chestSymptoms.length; id++){
+                id2symptom.put(id, chestSymptoms[id - 1]);
+                symptom2id.put(chestSymptoms[id - 1], id);
+                otherSymptoms.add(chestSymptoms[id - 1]);
+            }
+
         }
         else if(des.equals("back")) {
             description = "back symptoms";
