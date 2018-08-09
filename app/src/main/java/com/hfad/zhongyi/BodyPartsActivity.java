@@ -10,6 +10,7 @@ import android.view.View;
 public class BodyPartsActivity extends Activity {
 
     public static final String EXTRA_MESSAGE = "message";
+    private String message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -17,7 +18,7 @@ public class BodyPartsActivity extends Activity {
         setContentView(R.layout.activity_boay_parts);
         // get the pageNum from intent
         Intent intent = getIntent();
-        String message = intent.getStringExtra(EXTRA_MESSAGE);
+        message = intent.getStringExtra(EXTRA_MESSAGE);
         int pg = Integer.parseInt(message);
         // init and add fragment
         FragmentManager fragManager = getFragmentManager();
@@ -30,6 +31,7 @@ public class BodyPartsActivity extends Activity {
 
     public void onClickSummary(View view){
         Intent intent = new Intent(this, SummaryOfSymptoms.class);
+        intent.putExtra(SummaryOfSymptoms.MESSAGE, message);
         startActivity(intent);
     }
 }

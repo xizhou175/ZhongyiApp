@@ -1,5 +1,6 @@
 package com.hfad.zhongyi;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,11 +10,12 @@ class Page {
     HashMap<String, Integer> symptom2id = new HashMap<>();
     HashSet<Integer> chosen = new HashSet<>();
     HashSet<String> symptoms = new HashSet<>();
+    ArrayList<String> otherSymptoms = new ArrayList<String>();
 
     Page(String des){
 
         if(des.equals("head")) {
-            String[] headSymptoms = {"头1", "头2", "头3", "头4", "头5"};
+            String[] headSymptoms = {"头1", "头2", "头3", "头4", "头5", "头6"};
             description = "head symptoms";
             for(int i = 0; i < headSymptoms.length; i++){
                 symptoms.add(headSymptoms[i]);
@@ -36,11 +38,12 @@ class Page {
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
                 id += 1;
+                otherSymptoms.add(key);
             }
         }
         else if(des.equals("back")) {
             description = "back symptoms";
-            String[] backSymptoms = {"背1", "背2", "背3", "背4"};
+            String[] backSymptoms = {"背1", "背2", "背3", "背4", "背5", "背6"};
             for(int i = 0; i < backSymptoms.length; i++){
                 symptoms.add(backSymptoms[i]);
             }
@@ -80,6 +83,10 @@ class Page {
         else{
             this.chosen.add(id);
         }
+    }
+
+    public ArrayList<String> getOtherSymptoms() {
+        return this.otherSymptoms;
     }
 }
 

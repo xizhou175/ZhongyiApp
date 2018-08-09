@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
-        android:layout_centerVertical="true"
-        android:src="@drawable/plus" />
+        android:src="@drawable/if_minus_118643" />
 
 </RelativeLayout>

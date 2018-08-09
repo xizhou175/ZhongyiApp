@@ -26,12 +26,12 @@ public class TopLevelActivity extends AppCompatActivity {
     public void onClickFlip(View view){
         ImageView imageView = findViewById(R.id.bodyView);
         if(front) {
-            imageView.setImageResource(R.drawable.cappuccino);
+            imageView.setImageResource(R.drawable.male_back);
             findViewById(R.id.headText).setVisibility(View.INVISIBLE);
             findViewById(R.id.chestText).setVisibility(View.INVISIBLE);
             findViewById(R.id.backText).setVisibility(View.VISIBLE);
         } else {
-            imageView.setImageResource(R.drawable.body);
+            imageView.setImageResource(R.drawable.male_front);
             findViewById(R.id.headText).setVisibility(View.VISIBLE);
             findViewById(R.id.chestText).setVisibility(View.VISIBLE);
             findViewById(R.id.backText).setVisibility(View.INVISIBLE);
