@@ -6,20 +6,11 @@
     android:layout_height="match_parent">
 
     <fragment
-        class="com.hfad.zhongyi.BodySpecificFragments"
         android:id="@+id/symptoms_frag"
+        android:name="com.hfad.zhongyi.BodySpecificFragments"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <Button
-        android:id="@+id/summary"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/my_button_released"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClickSummary"
-        android:text="@string/summary" />
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

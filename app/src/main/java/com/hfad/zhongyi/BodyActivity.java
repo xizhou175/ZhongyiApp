@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TopLevelActivity extends AppCompatActivity {
+public class BodyActivity extends AppCompatActivity {
 
     private boolean front = true;
     Bitmap body;
@@ -21,17 +22,30 @@ public class TopLevelActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_level);
+        ImageView body = findViewById(R.id.bodyView);
+        if(Patient.personalInfo.getGender().equals("male")){
+            body.setImageResource(R.drawable.male_front);
+        }
+        else{
+            body.setImageResource(R.drawable.female_front);
+        }
     }
 
     public void onClickFlip(View view){
         ImageView imageView = findViewById(R.id.bodyView);
         if(front) {
-            imageView.setImageResource(R.drawable.cappuccino);
+            if(Patient.personalInfo.getGender().equals("male")) {
+                imageView.setImageResource(R.drawable.male_back);
+            }
+            else imageView.setImageResource(R.drawable.female_back);
             findViewById(R.id.headText).setVisibility(View.INVISIBLE);
             findViewById(R.id.chestText).setVisibility(View.INVISIBLE);
             findViewById(R.id.backText).setVisibility(View.VISIBLE);
         } else {
-            imageView.setImageResource(R.drawable.body);
+            if(Patient.personalInfo.getGender().equals("male")) {
+                imageView.setImageResource(R.drawable.male_front);
+            }
+            else imageView.setImageResource(R.drawable.female_front);
             findViewById(R.id.headText).setVisibility(View.VISIBLE);
             findViewById(R.id.chestText).setVisibility(View.VISIBLE);
             findViewById(R.id.backText).setVisibility(View.INVISIBLE);
