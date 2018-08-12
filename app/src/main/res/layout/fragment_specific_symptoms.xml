@@ -14,34 +14,13 @@
         android:gravity="center"
         android:textSize="20dp" />
 
-    <Button
-        android:id="@+id/s1"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_alignTop="@id/s2"
-        android:layout_marginRight="15dp"
-        android:layout_toLeftOf="@id/s2"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
-
-    <Button
-        android:id="@+id/s2"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_below="@id/title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
-
-    <Button
-        android:id="@+id/s3"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_alignTop="@id/s2"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@id/s2"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="378dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="0dp"
+        android:orientation="horizontal"></LinearLayout>
 
 </RelativeLayout>
