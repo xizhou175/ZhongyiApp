@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".SummaryOfSymptoms">
 
-    <ScrollView
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/button_layout"
@@ -24,8 +24,54 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:context=".SummaryOfSymptoms">
 
+            <ListView
+                android:id="@+id/lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/linear_layout"
+        android:layout_above="@id/button_layout"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:context=".SummaryOfSymptoms">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="症状总结"
+            android:textSize="30dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@android:color/holo_blue_light"/>
+
+        <ListView
+            android:id="@+id/lv"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:divider="@android:color/white"
+            android:dividerHeight="6dp" />
+
+        <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
+            android:onClick="addSymptoms"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/plus"
+            android:background="@color/grey"
+            android:layout_marginTop="6dp"/>
+
+    </LinearLayout>
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -35,22 +81,14 @@
     android:layout_alignParentBottom="true">
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="goToCamera"
-        android:text="相機"
+        android:text="相机"
+        android:textColor="@android:color/white"
         android:visibility="visible"
+        android:background="@android:color/holo_blue_light"
         android:layout_alignParentBottom="true"/>
-
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="addSymptoms"
-        android:layout_marginLeft="210dp"
-        android:text="添加"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
 </LinearLayout>
 
 </RelativeLayout>

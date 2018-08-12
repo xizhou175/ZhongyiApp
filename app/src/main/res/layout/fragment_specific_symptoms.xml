@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragParentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,34 +15,74 @@
         android:gravity="center"
         android:textSize="20dp" />
 
-    <Button
-        android:id="@+id/s1"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_alignTop="@id/s2"
-        android:layout_marginRight="15dp"
-        android:layout_toLeftOf="@id/s2"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title">
 
-    <Button
-        android:id="@+id/s2"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_below="@id/title"
+        <GridLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:useDefaultMargins="true"></GridLayout>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/otherSymptoms_layout"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
+        android:layout_marginTop="199dp"
+        android:background="@color/lightgrey"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".SummaryOfSymptoms">
+
+        <TextView
+            android:id="@+id/otherSymptoms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="其他症状"
+            android:textColor="@color/grey"
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/DropDownSign"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@android:drawable/arrow_down_float" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lvOfOthers"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/otherSymptoms_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:divider="@android:color/white"
+        android:dividerHeight="6dp"
+        android:visibility="invisible" />
 
     <Button
-        android:id="@+id/s3"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_alignTop="@id/s2"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@id/s2"
-        android:background="@drawable/my_button_released"
-        android:onClick="onClickButton" />
+        android:id="@+id/summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/symptoms_frag"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_blue_light"
+        android:onClick="onClickSummary"
+        android:text="@string/summary"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>
