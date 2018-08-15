@@ -13,7 +13,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TopLevelActivity extends AppCompatActivity {
+public class BodyActivity extends AppCompatActivity {
 
     private boolean front = true;
     Bitmap body;

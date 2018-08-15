@@ -1,5 +1,6 @@
 package com.hfad.zhongyi;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,27 +10,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-class onUploadSuccess implements View.OnClickListener {
-
-    @Override
-    public void onClick(View view) {
-        Log.d("click on success", "clicked");
-    }
-}
-
-class OnUploadFailed implements View.OnClickListener {
-
-    @Override
-    public void onClick(View view) {
-        Log.d("click on failed", "clicked");
-    }
-}
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -40,6 +24,22 @@ public class UploadActivity extends AppCompatActivity {
     private String CRLF = "\r\n";
     private String CharSet = "UTF-8";
     private byte[] body;
+
+    /* onClick handlers */
+    View.OnClickListener onClickSuccess = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(UploadActivity.this, BodyPartsActivity.class));
+            finish();
+        }
+    };
+    View.OnClickListener onClickRetake = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            startActivity(new Intent(UploadActivity.this, CameraActivity.class));
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,8 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void run() {
                 body = getIntent().getByteArrayExtra("imageData");
-                startUpload();
                 try {
+                    startUpload();
                     int responseCode = connection.getResponseCode();
                     Log.d(TAG, String.format("response Code: %d", responseCode));
                     if (responseCode == 200) {
@@ -64,44 +64,43 @@ public class UploadActivity extends AppCompatActivity {
                     } else {
                         uploadFinished(false);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    uploadFinished(false);
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadFinished(false);
-                    }
-                });
             }
         }).start();
     }
 
-    private void uploadFinished(boolean success) {
-        ProgressBar circle = findViewById(R.id.progressBar);
-        circle.setVisibility(View.INVISIBLE);
-        TextView text = findViewById(R.id.uploadText);
-        Button btn = findViewById(R.id.continue_btn);
-        if (success) {
-            text.setText("上传成功");
-            text.setTextColor(Color.GREEN);
-            btn.setText("继续");
-            btn.setOnClickListener(new onUploadSuccess());
-        } else {
-            text.setText("上传失败");
-            text.setTextColor(Color.RED);
-            btn.setText("重试");
-            btn.setOnClickListener(new OnUploadFailed());
-        }
-        btn.setVisibility(View.VISIBLE);
+    private void uploadFinished(final boolean success) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar circle = findViewById(R.id.progressBar);
+                circle.setVisibility(View.INVISIBLE);
+                TextView text = findViewById(R.id.uploadText);
+                Button btn = findViewById(R.id.continue_btn);
+                if (success) {
+                    text.setText("上传成功");
+                    text.setTextColor(Color.GREEN);
+                    btn.setText("继续");
+                    btn.setOnClickListener(onClickSuccess);
+                } else {
+                    text.setText("上传失败");
+                    text.setTextColor(Color.RED);
+                    btn.setText("重试");
+                    btn.setOnClickListener(onClickRetake);
+                }
+                btn.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
-    private void startUpload() {
+    private void startUpload() throws Exception {
         try {
             Log.d(TAG, String.format("upload start, file size: %d", body.length));
             connection = (HttpURLConnection) new URL(server_url).openConnection();
             connection.setDoOutput(true);
-            // connection.setRequestProperty("Content-Length", String.format("%d", body.length()));
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
             OutputStream output = connection.getOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(output, CharSet);
@@ -119,7 +118,7 @@ public class UploadActivity extends AppCompatActivity {
             Log.d(TAG, "upload finished");
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
-            e.printStackTrace();
+            throw(e);
         }
     }
 }

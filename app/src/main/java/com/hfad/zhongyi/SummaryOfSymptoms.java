@@ -78,7 +78,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         System.out.println(symptom);
         parentLinearLayout.removeView((View)view.getParent());
         if(parentLinearLayout.getChildCount() == 0){
-            Intent i = new Intent(this, TopLevelActivity.class);
+            Intent i = new Intent(this, BodyActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }
@@ -116,7 +116,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     }
 
     public void addSymptoms(View view){
-        Intent i = new Intent(this, TopLevelActivity.class);
+        Intent i = new Intent(this, BodyActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }

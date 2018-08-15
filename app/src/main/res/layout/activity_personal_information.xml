@@ -45,11 +45,13 @@
     </RelativeLayout>
 
     <EditText
+        android:id="@+id/text_age"
         android:layout_width="230sp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="20sp"
-        android:text="年龄"
-        android:layout_gravity="center_horizontal"/>
+        android:hint="年龄"
+        android:inputType="number" />
 
     <Button
         android:layout_width="230sp"

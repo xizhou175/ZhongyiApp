@@ -6,11 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -52,7 +54,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         }
         setPageTitle(view);
         lv = view.findViewById(R.id.lvOfOthers);
-        RelativeLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
+        GridLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
         if (pageNum != -1 && page != null) { // only inflate when we receive the pageNum arg and init page obj
             inflateButtons(buttonsLayout);
             ListOfOthers = page.getOtherSymptoms();
@@ -65,17 +67,16 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
             CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
             lv.setAdapter(adapter);
-            lv.setOnItemClickListener(this);
-            lv.post(new Runnable(){
+             lv.setOnItemClickListener(this);
+            lv.post(new Runnable() {
                 @Override
-                public void run(){
+                public void run() {
                     setListView(lv);
                 }
             });
             ImageView DropDownSign = view.findViewById(R.id.DropDownSign);
             DropDownSign.setOnClickListener(this);
         }
-
         return view;
     }
 
@@ -101,34 +102,15 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     }
 
 
-    private void inflateButtons(RelativeLayout layout) {
+    private void inflateButtons(GridLayout layout) {
         HashMap<Integer, String> map = page.getId2symptom();
-        TreeSet<Integer> ts1= new TreeSet<Integer>(map.keySet());
-        int size = map.size();
         for (int id = 1; id <= 6; id++) {
-
-
             Button button = new Button(layout.getContext());
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(120, 90);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             button.setText(map.get(id));
             button.setId(id);
             button.setTextColor(getResources().getColor(R.color.white));
-            int marginTop = 60 + ((id - 1) / 3) * 120;
-            if ((id + 1) % 3 == 0) {
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-                params.setMargins(0, marginTop, 0, 0);
-
-            } else if (id % 3 == 0) {
-                //params.setMargins(0, marginTop, 80, 0);
-                params.setMargins(0, marginTop, 155, 0);
-                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-            }
-            else{
-                params.setMargins(150, marginTop, 0, 0);
-                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-            }
             button.setLayoutParams(params);
-
 
             if (page.getChosen().contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
