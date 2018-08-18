@@ -59,6 +59,8 @@ public class HeartbeatView extends View {
         if (HeartRateMonitor.getCurrent() == HeartRateMonitor.TYPE.GREEN) bitmap = greenBitmap;
         else bitmap = redBitmap;
 
+        bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, true);
+
         int bitmapX = bitmap.getWidth() / 2;
         int bitmapY = bitmap.getHeight() / 2;
 

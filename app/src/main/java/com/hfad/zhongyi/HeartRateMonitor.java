@@ -1,6 +1,7 @@
 package com.hfad.zhongyi;
 
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -29,16 +31,14 @@ public class HeartRateMonitor extends Activity {
     private static final String TAG = "HeartRateMonitor";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
 
-    private static SurfaceView preview = null;
+    private static SurfaceView mPreview = null;
     private static SurfaceHolder previewHolder = null;
-    private static Camera camera = null;
+    private static Camera mCamera = null;
     private static View image = null;
     private static TextView text = null;
 
-    private static WakeLock wakeLock = null;
-
     private static int averageIndex = 0;
-    private static final int averageArraySize = 4;
+    private static final int averageArraySize = 5;
     private static final int[] averageArray = new int[averageArraySize];
 
     public static enum TYPE {
@@ -52,73 +52,126 @@ public class HeartRateMonitor extends Activity {
     }
 
     private static int beatsIndex = 0;
-    private static final int beatsArraySize = 3;
+    private static final int beatsArraySize = 5;
     private static final int[] beatsArray = new int[beatsArraySize];
     private static double beats = 0;
     private static long startTime = 0;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heart_rate_monitor);
 
-        preview = (SurfaceView) findViewById(R.id.preview);
-        previewHolder = preview.getHolder();
+        mPreview = (SurfaceView) findViewById(R.id.preview);
+        previewHolder = mPreview.getHolder();
         previewHolder.addCallback(surfaceCallback);
-        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         image = findViewById(R.id.image);
         text = (TextView) findViewById(R.id.text);
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+        startCamera();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    private void startCamera() {
+        if (safeCameraOpen()) {
+            setCameraDisplayOrientation(this, 0);
+        }
+    }
+
+    private void setCameraDisplayOrientation(Activity activity, int cameraId) {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result = (360 + info.orientation - degrees) % 360;
+        Log.d("Camera Set Orientation", String.valueOf(result));
+        mCamera.setDisplayOrientation(result);
+    }
+
+    private boolean safeCameraOpen() {
+        boolean qOpened = false;
+
+        try {
+            releaseCameraAndPreview();
+            mCamera = Camera.open(0);
+            qOpened = (mCamera != null);
+        } catch (Exception e) {
+            Log.e(getString(R.string.app_name), "failed to open Camera");
+            e.printStackTrace();
+        }
+
+        return qOpened;
+    }
+
+    private void releaseCameraAndPreview() {
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onResume() {
         super.onResume();
-
-        wakeLock.acquire();
-
-        camera = Camera.open();
-
-        startTime = System.currentTimeMillis();
+        Log.d(TAG, "onResume");
+        super.onResume();
+        if (mCamera != null) {
+            try {
+                mCamera.reconnect();
+                mCamera.startPreview();
+            } catch (RuntimeException e) {
+                Log.d(TAG, "RuntimeException on Resume: " + e.getMessage());
+                startCamera();
+            } catch (IOException e) {
+                Log.d(TAG, "IOException on Resume: " + e.getMessage());
+            }
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onPause() {
         super.onPause();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
 
-        wakeLock.release();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
 
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseCameraAndPreview();
     }
 
     private static PreviewCallback previewCallback = new PreviewCallback() {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             if (data == null) throw new NullPointerException();
@@ -131,8 +184,9 @@ public class HeartRateMonitor extends Activity {
             int height = size.height;
 
             int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-            // Log.i(TAG, "imgAvg="+imgAvg);
-            if (imgAvg == 0 || imgAvg == 255) {
+            // Log.d(TAG, "imgAvg="+imgAvg);
+            if (imgAvg < 180) {
+                text.setText("--");
                 processing.set(false);
                 return;
             }
@@ -152,7 +206,7 @@ public class HeartRateMonitor extends Activity {
                 newType = TYPE.RED;
                 if (newType != currentType) {
                     beats++;
-                    // Log.d(TAG, "BEAT!! beats="+beats);
+                    Log.d(TAG, "BEAT!! beats="+beats);
                 }
             } else if (imgAvg > rollingAverage) {
                 newType = TYPE.GREEN;
@@ -170,18 +224,16 @@ public class HeartRateMonitor extends Activity {
 
             long endTime = System.currentTimeMillis();
             double totalTimeInSecs = (endTime - startTime) / 1000d;
-            if (totalTimeInSecs >= 10) {
+            if (totalTimeInSecs >= 5) {
                 double bps = (beats / totalTimeInSecs);
                 int dpm = (int) (bps * 60d);
-                if (dpm < 30 || dpm > 180) {
+                if (dpm < 30 || dpm > 200) {
                     startTime = System.currentTimeMillis();
                     beats = 0;
                     processing.set(false);
+                    text.setText("--");
                     return;
                 }
-
-                // Log.d(TAG,
-                // "totalTimeInSecs="+totalTimeInSecs+" beats="+beats);
 
                 if (beatsIndex == beatsArraySize) beatsIndex = 0;
                 beatsArray[beatsIndex] = dpm;
@@ -212,8 +264,8 @@ public class HeartRateMonitor extends Activity {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             try {
-                camera.setPreviewDisplay(previewHolder);
-                camera.setPreviewCallback(previewCallback);
+                mCamera.setPreviewDisplay(previewHolder);
+                mCamera.setPreviewCallback(previewCallback);
             } catch (Throwable t) {
                 Log.e("surfaceCallback", "Exception in setPreviewDisplay()", t);
             }
@@ -224,20 +276,12 @@ public class HeartRateMonitor extends Activity {
          */
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            Camera.Parameters parameters = camera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            Camera.Size size = getSmallestPreviewSize(width, height, parameters);
-            if (size != null) {
-                parameters.setPreviewSize(size.width, size.height);
-                Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
-            }
-            camera.setParameters(parameters);
-            camera.startPreview();
+            //Camera.Parameters parameters = mCamera.getParameters();
+            //parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            //mCamera.setParameters(parameters);
+            mCamera.startPreview();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             // Ignore
