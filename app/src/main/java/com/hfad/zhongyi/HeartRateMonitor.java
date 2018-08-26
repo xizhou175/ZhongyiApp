@@ -5,12 +5,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,7 +27,7 @@ import android.widget.TextView;
  *
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class HeartRateMonitor extends Activity {
+public class HeartRateMonitor extends Activity implements DialogInterface.OnClickListener {
 
     private static final String TAG = "HeartRateMonitor";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
@@ -40,6 +43,18 @@ public class HeartRateMonitor extends Activity {
     private static int averageIndex = 0;
     private static final int averageArraySize = 4;
     private static final int[] averageArray = new int[averageArraySize];
+
+    private boolean measurementFinished = false;
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        if (measurementFinished) {
+            Intent intent = new Intent(this, UploadActivity.class);
+            intent.putExtra("heartBeatData", beats);
+            startActivity(intent);
+            finish();
+        }
+    }
 
     public static enum TYPE {
         GREEN, RED
@@ -75,7 +90,21 @@ public class HeartRateMonitor extends Activity {
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+
+        measurementAlert(true).show();
     }
+
+    private AlertDialog measurementAlert(final boolean start) {
+        String message = "为了准确测量心率，请将手指按于摄像头前（指头需覆盖摄像头），直到系统提示完成（大约需要30秒）";
+        if (!start) {
+            message = "测量完成";
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message).setTitle("注意").setPositiveButton("确认", this);
+        return builder.create();
+    }
+
+
 
     /**
      * {@inheritDoc}
@@ -114,7 +143,21 @@ public class HeartRateMonitor extends Activity {
         camera = null;
     }
 
-    private static PreviewCallback previewCallback = new PreviewCallback() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onDestroy() {
+        wakeLock.release();
+
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+        super.onDestroy();
+    }
+
+    private PreviewCallback previewCallback = new PreviewCallback() {
 
         /**
          * {@inheritDoc}
@@ -183,7 +226,6 @@ public class HeartRateMonitor extends Activity {
                 // Log.d(TAG,
                 // "totalTimeInSecs="+totalTimeInSecs+" beats="+beats);
 
-                if (beatsIndex == beatsArraySize) beatsIndex = 0;
                 beatsArray[beatsIndex] = dpm;
                 beatsIndex++;
 
@@ -199,12 +241,21 @@ public class HeartRateMonitor extends Activity {
                 text.setText(String.valueOf(beatsAvg));
                 startTime = System.currentTimeMillis();
                 beats = 0;
+
+                if (beatsIndex == beatsArraySize) { // measure finished
+                    finishMeasurement(beatsAvg);
+                }
             }
             processing.set(false);
         }
     };
 
-    private static SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
+    private void finishMeasurement(int beats) {
+        measurementFinished = true;
+        measurementAlert(false).show();
+    }
+
+    private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
         /**
          * {@inheritDoc}
