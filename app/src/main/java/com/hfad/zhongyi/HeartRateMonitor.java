@@ -1,7 +1,10 @@
 package com.hfad.zhongyi;
 
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,13 +14,13 @@ import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
@@ -32,31 +35,38 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private static final String TAG = "HeartRateMonitor";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
 
-    private static SurfaceView preview = null;
-    private static SurfaceHolder previewHolder = null;
-    private static Camera camera = null;
+    private static CameraPreview mPreview = null;
+    private static Camera mCamera = null;
     private static View image = null;
     private static TextView text = null;
-
-    private static WakeLock wakeLock = null;
 
     private static int averageIndex = 0;
     private static final int averageArraySize = 4;
     private static final int[] averageArray = new int[averageArraySize];
 
     private boolean measurementFinished = false;
+    private int finalBeats = 0;
+    private Lock lock = new ReentrantLock();
 
     @Override
-    public void onClick(DialogInterface dialogInterface, int i) {
+    public void onClick(DialogInterface dialogInterface, int which) {
         if (measurementFinished) {
-            Intent intent = new Intent(this, UploadActivity.class);
-            intent.putExtra("heartBeatData", beats);
-            startActivity(intent);
-            finish();
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                Intent intent = new Intent(this, UploadActivity.class);
+                intent.putExtra("heartBeatData", finalBeats);
+                startActivity(intent);
+                finish();
+            } else {
+                lock.lock();
+                    beatsIndex = 0;
+                lock.unlock();
+            }
+        } else {
+            startCamera();
         }
     }
 
-    public static enum TYPE {
+    public enum TYPE {
         GREEN, RED
     };
 
@@ -72,110 +82,157 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private static double beats = 0;
     private static long startTime = 0;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heart_rate_monitor);
 
-        preview = (SurfaceView) findViewById(R.id.preview);
-        previewHolder = preview.getHolder();
-        previewHolder.addCallback(surfaceCallback);
-        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
         image = findViewById(R.id.image);
         text = (TextView) findViewById(R.id.text);
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
-
-        measurementAlert(true).show();
+        measurementAlert().show();
     }
 
-    private AlertDialog measurementAlert(final boolean start) {
+    private AlertDialog measurementAlert() {
         String message = "为了准确测量心率，请将手指按于摄像头前（指头需覆盖摄像头），直到系统提示完成（大约需要30秒）";
-        if (!start) {
+        if (measurementFinished) {
             message = "测量完成";
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message).setTitle("注意").setPositiveButton("确认", this);
-        return builder.create();
+        if (measurementFinished) {
+            builder.setNegativeButton("重新测量", this);
+        }
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 
+    private void startCamera() {
+        if (safeCameraOpen()) {
+            setCameraDisplayOrientation(this, 0);
+            mCamera.setPreviewCallback(previewCallback);
+            mPreview = new CameraPreview(this, mCamera);
+            FrameLayout preview = findViewById(R.id.preview);
+            preview.addView(mPreview);
+        }
+    }
 
+    private void setCameraDisplayOrientation(Activity activity, int cameraId) {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
+        int result = (360 + info.orientation - degrees) % 360;
+        Log.d("Camera Set Orientation", String.valueOf(result));
+        mCamera.setDisplayOrientation(result);
+    }
+
+    private boolean safeCameraOpen() {
+        boolean qOpened = false;
+
+        try {
+            releaseCameraAndPreview();
+            mCamera = Camera.open(0);
+            qOpened = (mCamera != null);
+        } catch (Exception e) {
+            Log.e(getString(R.string.app_name), "failed to open Camera");
+            e.printStackTrace();
+        }
+
+        return qOpened;
+    }
+
+    private void releaseCameraAndPreview() {
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onResume() {
         super.onResume();
-
-        wakeLock.acquire();
-
-        camera = Camera.open();
-
-        startTime = System.currentTimeMillis();
+        Log.d(TAG, "onResume");
+        super.onResume();
+        if (mCamera != null) {
+            try {
+                mCamera.reconnect();
+                mCamera.startPreview();
+            } catch (RuntimeException e) {
+                Log.d(TAG, "RuntimeException on Resume: " + e.getMessage());
+                startCamera();
+            } catch (IOException e) {
+                Log.d(TAG, "IOException on Resume: " + e.getMessage());
+            }
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onPause() {
         super.onPause();
-
-        wakeLock.release();
-
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void onDestroy() {
-        wakeLock.release();
+    protected void onStop() {
+        super.onStop();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
 
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
+        releaseCameraAndPreview();
     }
 
     private PreviewCallback previewCallback = new PreviewCallback() {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             if (data == null) throw new NullPointerException();
             Camera.Size size = cam.getParameters().getPreviewSize();
+
+            // Log.d(TAG, "CameraPreviewSize: " + size.height + " " + size.width);
+
+            FrameLayout layout = findViewById(R.id.preview);
+            // Log.d(TAG, "Layout size: " + layout.getHeight() + " " + layout.getWidth());
+
             if (size == null) throw new NullPointerException();
 
             if (!processing.compareAndSet(false, true)) return;
 
-            int width = size.width;
-            int height = size.height;
+            int width = layout.getWidth();
+            int height = layout.getHeight();
 
-            int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-            // Log.i(TAG, "imgAvg="+imgAvg);
-            if (imgAvg == 0 || imgAvg == 255) {
+            int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), size.width, size.height);
+            // Log.d(TAG, "imgAvg="+imgAvg);
+            if (imgAvg < 180) {
+                text.setText("--");
                 processing.set(false);
                 return;
             }
@@ -213,21 +270,26 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 
             long endTime = System.currentTimeMillis();
             double totalTimeInSecs = (endTime - startTime) / 1000d;
-            if (totalTimeInSecs >= 10) {
+            if (totalTimeInSecs >= 11) {
                 double bps = (beats / totalTimeInSecs);
                 int dpm = (int) (bps * 60d);
-                if (dpm < 30 || dpm > 180) {
+                if (dpm < 30 || dpm > 200) {
                     startTime = System.currentTimeMillis();
                     beats = 0;
                     processing.set(false);
+                    text.setText("--");
                     return;
                 }
 
-                // Log.d(TAG,
-                // "totalTimeInSecs="+totalTimeInSecs+" beats="+beats);
+                if (beatsIndex >= beatsArraySize) {
+                    return;
+                }
 
                 beatsArray[beatsIndex] = dpm;
-                beatsIndex++;
+
+                lock.lock();
+                    beatsIndex++;
+                lock.unlock();
 
                 int beatsArrayAvg = 0;
                 int beatsArrayCnt = 0;
@@ -243,74 +305,84 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
                 beats = 0;
 
                 if (beatsIndex == beatsArraySize) { // measure finished
-                    finishMeasurement(beatsAvg);
+                    finalBeats = beatsAvg;
+                    finishMeasurement();
                 }
             }
             processing.set(false);
         }
     };
 
-    private void finishMeasurement(int beats) {
+    private void finishMeasurement() {
         measurementFinished = true;
-        measurementAlert(false).show();
-    }
-
-    private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            try {
-                camera.setPreviewDisplay(previewHolder);
-                camera.setPreviewCallback(previewCallback);
-            } catch (Throwable t) {
-                Log.e("surfaceCallback", "Exception in setPreviewDisplay()", t);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            Camera.Parameters parameters = camera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            Camera.Size size = getSmallestPreviewSize(width, height, parameters);
-            if (size != null) {
-                parameters.setPreviewSize(size.width, size.height);
-                Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
-            }
-            camera.setParameters(parameters);
-            camera.startPreview();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            // Ignore
-        }
-    };
-
-    private static Camera.Size getSmallestPreviewSize(int width, int height, Camera.Parameters parameters) {
-        Camera.Size result = null;
-
-        for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
-            if (size.width <= width && size.height <= height) {
-                if (result == null) {
-                    result = size;
-                } else {
-                    int resultArea = result.width * result.height;
-                    int newArea = size.width * size.height;
-
-                    if (newArea < resultArea) result = size;
-                }
-            }
-        }
-
-        return result;
+        measurementAlert().show();
     }
 }
+
+
+/** A basic Camera preview class */
+class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+    private SurfaceHolder mHolder;
+    private Camera mCamera;
+
+    private String TAG = "CameraPreview";
+
+    public CameraPreview(Context context, Camera camera) {
+        super(context);
+        mCamera = camera;
+
+        // Install a SurfaceHolder.Callback so we get notified when the
+        // underlying surface is created and destroyed.
+        mHolder = getHolder();
+        mHolder.addCallback(this);
+        // deprecated setting, but required on Android versions prior to 3.0
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    public void surfaceCreated(SurfaceHolder holder) {
+        // The Surface has been created, now tell the camera where to draw the preview.
+        try {
+            mCamera.setPreviewDisplay(holder);
+            mCamera.startPreview();
+        } catch (IOException e) {
+            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+        }
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // empty. Take care of releasing the Camera preview in your activity.
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        // If your preview can change or rotate, take care of those events here.
+        // Make sure to stop the preview before resizing or reformatting it.
+
+        if (mHolder.getSurface() == null){
+            // preview surface does not exist
+            return;
+        }
+
+        // stop preview before making changes
+        try {
+            mCamera.stopPreview();
+        } catch (Exception e){
+            // ignore: tried to stop a non-existent preview
+        }
+
+        // set preview size and make any resize, rotate or
+        // reformatting changes here
+
+        // start preview with new settings
+        try {
+            mCamera.setPreviewDisplay(mHolder);
+
+            Camera.Parameters parameters = mCamera.getParameters();
+            // parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mCamera.setParameters(parameters);
+            mCamera.startPreview();
+        } catch (Exception e){
+            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+        }
+    }
+}
+
