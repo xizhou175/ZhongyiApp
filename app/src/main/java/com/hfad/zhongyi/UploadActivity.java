@@ -24,6 +24,7 @@ public class UploadActivity extends AppCompatActivity {
     private String CRLF = "\r\n";
     private String CharSet = "UTF-8";
     private byte[] body;
+    private int heartRate = 0;
 
     /* onClick handlers */
     View.OnClickListener onClickSuccess = new View.OnClickListener() {
@@ -33,11 +34,10 @@ public class UploadActivity extends AppCompatActivity {
             finish();
         }
     };
-    View.OnClickListener onClickRetake = new View.OnClickListener() {
+    View.OnClickListener onClickRetry = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            startActivity(new Intent(UploadActivity.this, CameraActivity.class));
-            finish();
+            startUploads();
         }
     };
 
@@ -51,28 +51,25 @@ public class UploadActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(TAG, "start upload");
         super.onStart();
+        startUploads();
+    }
+
+    private void startUploads() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = getIntent();
-                body = intent.getByteArrayExtra("imageData");
-                if (body != null) {
-                    try {
-                        startUpload();
-                        int responseCode = connection.getResponseCode();
-                        Log.d(TAG, String.format("response Code: %d", responseCode));
-                        if (responseCode == 200) {
-                            uploadFinished(true);
-                        } else {
-                            uploadFinished(false);
-                        }
-                    } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+                if (body == null || heartRate == 0) {
+                    Intent intent = getIntent();
+                    body = intent.getByteArrayExtra("imageData");
+                    heartRate = intent.getIntExtra("heartBeatData", 0);
+                }
+                if (body != null && heartRate > 0){
+                    if (uploadImage() && uploadHeartRate()) {
+                        uploadFinished(true);
+                    } else {
                         uploadFinished(false);
                     }
                 }
-                int heartBeat = intent.getIntExtra("heartBeatData", 0);
-                Log.d(TAG, "heartBeatData " + heartBeat);
             }
         }).start();
     }
@@ -94,17 +91,17 @@ public class UploadActivity extends AppCompatActivity {
                     text.setText("上传失败");
                     text.setTextColor(Color.RED);
                     btn.setText("重试");
-                    btn.setOnClickListener(onClickRetake);
+                    btn.setOnClickListener(onClickRetry);
                 }
                 btn.setVisibility(View.VISIBLE);
             }
         });
     }
 
-    private void startUpload() throws Exception {
+    private boolean uploadImage() {
         try {
             Log.d(TAG, String.format("upload start, file size: %d", body.length));
-            connection = (HttpURLConnection) new URL(server_url).openConnection();
+            connection = (HttpURLConnection) new URL(server_url + "/ingest").openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
             OutputStream output = connection.getOutputStream();
@@ -121,9 +118,33 @@ public class UploadActivity extends AppCompatActivity {
             writer.append("--" + boundary + "--").append(CRLF);
             writer.flush();
             Log.d(TAG, "upload finished");
+
+            int responseCode = connection.getResponseCode();
+            Log.d(TAG, String.format("upload image response Code: %d", responseCode));
+            return responseCode == 200;
+
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
-            throw(e);
+            return false;
+        }
+    }
+
+    private boolean uploadHeartRate() {
+        try {
+            connection = (HttpURLConnection) new URL(server_url + "/heartrate").openConnection();
+            connection.setDoOutput(true);
+            OutputStream output = connection.getOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(output, CharSet);
+            writer.write("heartRate=" + heartRate);
+            writer.flush();
+
+            int responseCode = connection.getResponseCode();
+            Log.d(TAG, String.format("upload heartRate response Code: %d", responseCode));
+            return responseCode == 200;
+
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+            return false;
         }
     }
 }

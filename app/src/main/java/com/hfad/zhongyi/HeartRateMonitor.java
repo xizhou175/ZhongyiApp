@@ -48,12 +48,15 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private int finalBeats = 0;
     private Lock lock = new ReentrantLock();
 
+    byte[] imageData = null;
+
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
         if (measurementFinished) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 Intent intent = new Intent(this, UploadActivity.class);
                 intent.putExtra("heartBeatData", finalBeats);
+                intent.putExtra("imageData", imageData);
                 startActivity(intent);
                 finish();
             } else {
@@ -63,6 +66,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
             }
         } else {
             startCamera();
+            cameraOpenConfirmed = true;
         }
     }
 
@@ -81,9 +85,11 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private static final int[] beatsArray = new int[beatsArraySize];
     private static double beats = 0;
     private static long startTime = 0;
+    private boolean cameraOpenConfirmed = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heart_rate_monitor);
 
@@ -91,6 +97,8 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         text = (TextView) findViewById(R.id.text);
 
         measurementAlert().show();
+
+        imageData = getIntent().getByteArrayExtra("imageData");
     }
 
     private AlertDialog measurementAlert() {
@@ -145,7 +153,6 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 
     private boolean safeCameraOpen() {
         boolean qOpened = false;
-
         try {
             releaseCameraAndPreview();
             mCamera = Camera.open(0);
@@ -159,7 +166,12 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     }
 
     private void releaseCameraAndPreview() {
+        if (mPreview != null) {
+            mPreview.getHolder().removeCallback(mPreview);
+        }
         if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.setPreviewCallback(null);
             mCamera.release();
             mCamera = null;
         }
@@ -174,38 +186,29 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        super.onResume();
-        if (mCamera != null) {
-            try {
-                mCamera.reconnect();
-                mCamera.startPreview();
-            } catch (RuntimeException e) {
-                Log.d(TAG, "RuntimeException on Resume: " + e.getMessage());
-                startCamera();
-            } catch (IOException e) {
-                Log.d(TAG, "IOException on Resume: " + e.getMessage());
-            }
+        if (cameraOpenConfirmed && mCamera == null) {
+            startCamera();
         }
     }
 
     @Override
     public void onPause() {
+        Log.d(TAG, "onPause");
+        releaseCameraAndPreview();
         super.onPause();
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+        Log.d(TAG, "onPause");
     }
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop");
         super.onStop();
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+        releaseCameraAndPreview();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         releaseCameraAndPreview();
     }
@@ -215,7 +218,13 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             if (data == null) throw new NullPointerException();
-            Camera.Size size = cam.getParameters().getPreviewSize();
+            Camera.Size size;
+            try {
+                size = cam.getParameters().getPreviewSize();
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+                return;
+            }
 
             // Log.d(TAG, "CameraPreviewSize: " + size.height + " " + size.width);
 
@@ -226,10 +235,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 
             if (!processing.compareAndSet(false, true)) return;
 
-            int width = layout.getWidth();
-            int height = layout.getHeight();
-
-            int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), size.width, size.height);
+            int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data, size.width, size.height);
             // Log.d(TAG, "imgAvg="+imgAvg);
             if (imgAvg < 180) {
                 text.setText("--");
@@ -344,7 +350,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         try {
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
