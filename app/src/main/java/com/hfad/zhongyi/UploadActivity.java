@@ -54,20 +54,25 @@ public class UploadActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                body = getIntent().getByteArrayExtra("imageData");
-                try {
-                    startUpload();
-                    int responseCode = connection.getResponseCode();
-                    Log.d(TAG, String.format("response Code: %d", responseCode));
-                    if (responseCode == 200) {
-                        uploadFinished(true);
-                    } else {
+                Intent intent = getIntent();
+                body = intent.getByteArrayExtra("imageData");
+                if (body != null) {
+                    try {
+                        startUpload();
+                        int responseCode = connection.getResponseCode();
+                        Log.d(TAG, String.format("response Code: %d", responseCode));
+                        if (responseCode == 200) {
+                            uploadFinished(true);
+                        } else {
+                            uploadFinished(false);
+                        }
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
                         uploadFinished(false);
                     }
-                } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
-                    uploadFinished(false);
                 }
+                int heartBeat = intent.getIntExtra("heartBeatData", 0);
+                Log.d(TAG, "heartBeatData " + heartBeat);
             }
         }).start();
     }
