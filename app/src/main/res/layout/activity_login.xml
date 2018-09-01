@@ -11,6 +11,7 @@
     <EditText
         android:layout_width="230sp"
         android:layout_height="wrap_content"
+        android:id="@+id/username"
         style="@style/Theme.App.Base"
         android:paddingTop="150sp"
         android:layout_gravity="center_horizontal"
@@ -20,6 +21,7 @@
     <EditText
         android:layout_width="230sp"
         android:layout_height="wrap_content"
+        android:id="@+id/password"
         style="@style/Theme.App.Base"
         android:layout_marginTop="40sp"
         android:layout_gravity="center_horizontal"
@@ -31,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
         android:layout_gravity="center_horizontal"
+        android:id="@+id/loginButton"
         android:text="@string/login"
         android:background="@color/holo_blue_light"/>
     
@@ -48,6 +51,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/toRegister"
             android:text="@string/register"
             android:layout_alignParentEnd="true"/>
         

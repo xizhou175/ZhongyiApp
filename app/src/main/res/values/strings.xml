@@ -14,5 +14,6 @@
     <string name="login">登录</string>
     <string name="passwordWhereabout">忘记密码</string>
     <string name="register">注册账户</string>
+    <string name="registerTitle">手机注册</string>
     <string name="default_text">--</string>
 </resources>

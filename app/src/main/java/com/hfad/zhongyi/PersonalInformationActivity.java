@@ -10,11 +10,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import static android.app.PendingIntent.getActivity;
+import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class PersonalInformationActivity extends AppCompatActivity implements View.OnClickListener{
 
     private AlertDialog alertDialog;
+    private String serverURL = "http://10.0.2.2:8080/registration";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +40,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                 ColorDrawable buttonColor = (ColorDrawable) maleButton.getBackground();
                 int color = buttonColor.getColor();
                 if(color != getResources().getColor(R.color.holo_blue_light)) {
-                    Patient.personalInfo.setGender("male");
+                    personalInfo.setGender("male");
                     if (color == getResources().getColor(R.color.holo_blue_light)) {
                         maleButton.setBackgroundColor(getResources().getColor(R.color.lightgrey));
                         femaleButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
@@ -49,7 +58,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                 ColorDrawable buttonColor = (ColorDrawable) femaleButton.getBackground();
                 int color = buttonColor.getColor();
                 if(color != getResources().getColor(R.color.holo_blue_light)) {
-                    Patient.personalInfo.setGender("female");
+                    personalInfo.setGender("female");
                     if (color == getResources().getColor(R.color.lightgrey)) {
                         maleButton.setBackgroundColor(getResources().getColor(R.color.lightgrey));
                         femaleButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
@@ -82,11 +91,57 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                 this.alertDialog.show();
                 return;
             }
+            personalInfo.setAge(int_age);
         } catch (NumberFormatException e) {
             this.alertDialog.show();
             return;
         }
+
+        //send a request to the server
+        new Thread(new Runnable() {
+            public void run() {
+                JSONObject jsonObject = formatDataAsJson();
+                try {
+                    URL url = new URL(serverURL);
+                    HttpURLConnection client = (HttpURLConnection) url.openConnection();
+                    client.setDoOutput(true);
+                    client.setDoInput(true);
+                    client.setRequestProperty("Content-Type", "text/plain");
+                    client.setRequestProperty("Accept", "text/plain");
+                    client.setRequestMethod("POST");
+                    OutputStreamWriter wr = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
+                    wr.flush();
+                    wr.write(jsonObject.toString());
+                    wr.flush();
+                    int responseCode = client.getResponseCode();
+                    if(responseCode == 200){
+                        Intent intent = new Intent(PersonalInformationActivity.this, BodyActivity.class);
+                        startActivity(intent);
+                    }
+                    System.out.println("response code is:");
+                    System.out.println(responseCode);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         Intent intent = new Intent(this, BodyActivity.class);
         startActivity(intent);
+    }
+
+    private JSONObject formatDataAsJson(){
+        JSONObject  jsonObject = new JSONObject();
+        try {
+            jsonObject.accumulate("name", personalInfo.getName());
+            jsonObject.accumulate("password", personalInfo.getPassword());
+            jsonObject.accumulate("email", personalInfo.getEmail());
+        }catch(Exception e){
+            System.out.println("failed to create json");
+        }
+        String json = jsonObject.toString();
+        System.out.println(json);
+        return jsonObject;
     }
 }
