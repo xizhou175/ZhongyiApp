@@ -19,7 +19,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private String username = "";
     private String password = "";
-    private static final String serverURL = "http://10.0.2.2:8080/login";
+    //private static final String serverURL = "http://10.0.2.2:8080/login";
+    private static final String serverURL = "http://10.0.0.9:8080/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
