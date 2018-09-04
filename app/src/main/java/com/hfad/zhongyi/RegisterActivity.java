@@ -21,11 +21,13 @@ import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class RegisterActivity extends Activity implements View.OnClickListener{
 
-    private String email = "";
+    private String username = "";
     private String password = "";
+    private String passwordValidation = "";
 
-    private boolean emailGood = true;
+    private boolean usernameGood = true;
     private boolean passwordGood = true;
+    private boolean validationGood = true;
 
     private AlertDialog alertDialog;
 
@@ -40,24 +42,28 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        EditText emailField = findViewById(R.id.email);
+        EditText usernameField = findViewById(R.id.username);
         EditText passwordField = findViewById(R.id.registerPassword);
-        email = emailField.getText().toString();
+        EditText passwordValidationField = findViewById(R.id.passwordValidation);
+        username = usernameField.getText().toString();
         password = passwordField.getText().toString();
+        passwordValidation = passwordValidationField.getText().toString();
 
-        emailGood = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && !email.isEmpty();
+        if(!password.equals(passwordValidation)) validationGood = false;
+
+        if(username.length() < 4) usernameGood = false;
         if(password.isEmpty() && password.length() < 6) passwordGood = false;
 
         createAlertDiaglog();
 
-        if(!passwordGood || !emailGood){
+        if(!passwordGood || !usernameGood || !validationGood){
             this.alertDialog.show();
             return;
         }
 
-        if(!email.isEmpty() && !password.isEmpty()){
+        if(!username.isEmpty() && !password.isEmpty()){
             //create a new user
-            personalInfo.setEmail(email);
+            personalInfo.setName(username);
             personalInfo.setPassword(password);
         }
 
@@ -65,29 +71,21 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         startActivity(intent);
     }
 
-    private JSONObject formatDataAsJson(){
-        JSONObject  jsonObject = new JSONObject();
-        try {
-            jsonObject.accumulate("email", email);
-            jsonObject.accumulate("password", password);
-        }catch(Exception e){
-            System.out.println("failed to create json");
-        }
-        String json = jsonObject.toString();
-        System.out.println(json);
-        return jsonObject;
-    }
-
     private void createAlertDiaglog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if(!emailGood) {
-            builder.setMessage("请输入正确的邮箱").setTitle("无效邮箱").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+        if(!usernameGood) {
+            builder.setMessage("用户名应不小于4位字母").setTitle("无效用户名").setPositiveButton("确认", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                 }
             });
         }
         else if(!passwordGood){
             builder.setMessage("密码必须大于或等于6位").setTitle("无效密码").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {}
+            });
+        }
+        else if(!validationGood){
+            builder.setTitle("两次输入的密码不匹配").setPositiveButton("确认", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {}
             });
         }

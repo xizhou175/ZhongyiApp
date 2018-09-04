@@ -134,9 +134,10 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
     private JSONObject formatDataAsJson(){
         JSONObject  jsonObject = new JSONObject();
         try {
-            jsonObject.accumulate("name", personalInfo.getName());
+            jsonObject.accumulate("username", personalInfo.getName());
+            jsonObject.accumulate("age", personalInfo.getAge());
+            jsonObject.accumulate("gender", personalInfo.getGender());
             jsonObject.accumulate("password", personalInfo.getPassword());
-            jsonObject.accumulate("email", personalInfo.getEmail());
         }catch(Exception e){
             System.out.println("failed to create json");
         }
