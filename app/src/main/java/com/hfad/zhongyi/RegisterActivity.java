@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.app.Activity;
 import android.widget.Button;
@@ -20,6 +21,8 @@ import java.net.URL;
 import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class RegisterActivity extends Activity implements View.OnClickListener{
+
+    private String TAG = "RegisterActivity";
 
     private String username = "";
     private String password = "";
@@ -49,10 +52,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         password = passwordField.getText().toString();
         passwordValidation = passwordValidationField.getText().toString();
 
-        if(!password.equals(passwordValidation)) validationGood = false;
+        validationGood = password.equals(passwordValidation);
 
-        if(username.length() < 4) usernameGood = false;
-        if(password.isEmpty() && password.length() < 6) passwordGood = false;
+        usernameGood = username.length() >= 4;
+
+        passwordGood = !(password.isEmpty() || password.length() < 6);
 
         createAlertDiaglog();
 

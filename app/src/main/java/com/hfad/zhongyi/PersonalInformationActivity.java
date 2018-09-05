@@ -23,6 +23,7 @@ import static com.hfad.zhongyi.Patient.personalInfo;
 public class PersonalInformationActivity extends AppCompatActivity implements View.OnClickListener{
 
     private AlertDialog alertDialog;
+    //private static final String serverURL = "http://10.0.2.2:8080/registration"; // use for emulator
     private String serverURL = "http://10.0.0.9:8080/registration";
 
     @Override
@@ -114,24 +115,25 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     wr.write(jsonObject.toString());
                     wr.flush();
                     int responseCode = client.getResponseCode();
+                    System.out.println("response code is:");
+                    System.out.println(responseCode);
+
                     if(responseCode == 200){
                         Intent intent = new Intent(PersonalInformationActivity.this, BodyActivity.class);
                         startActivity(intent);
+                    } else {
+                        // TODO: AlertDialog
                     }
-                    System.out.println("response code is:");
-                    System.out.println(responseCode);
+
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }
         }).start();
-
-        Intent intent = new Intent(this, BodyActivity.class);
-        startActivity(intent);
     }
 
-    private JSONObject formatDataAsJson(){
+    private JSONObject formatDataAsJson() {
         JSONObject  jsonObject = new JSONObject();
         try {
             jsonObject.accumulate("username", personalInfo.getName());

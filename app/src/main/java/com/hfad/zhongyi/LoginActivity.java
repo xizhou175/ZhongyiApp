@@ -19,8 +19,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private String username = "";
     private String password = "";
-    //private static final String serverURL = "http://10.0.2.2:8080/login";
-    private static final String serverURL = "http://10.0.0.9:8080/login";
+    //private static final String serverURL = "http://10.0.2.2:8080/login"; // use for emulator
+    private static final String serverURL = "http://10.0.0.9:8080/login";   // use for real phones
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,32 +34,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View view){
                 EditText usrnameField = findViewById(R.id.username);
-                EditText passwordField = findViewById(R.id.password);
+                final EditText passwordField = findViewById(R.id.password);
                 username = usrnameField.getText().toString();
                 password = passwordField.getText().toString();
                 if(!username.isEmpty() && !password.isEmpty()){
                     new Thread(new Runnable() {
                         public void run() {
-                            JSONObject jsonObject = formatDataAsJson();
                             try {
                                 URL url = new URL(serverURL);
                                 HttpURLConnection client = (HttpURLConnection) url.openConnection();
                                 client.setDoOutput(true);
-                                client.setDoInput(true);
-                                client.setRequestProperty("Content-Type", "text/plain");
-                                client.setRequestProperty("Accept", "text/plain");
                                 client.setRequestMethod("POST");
                                 OutputStreamWriter wr = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
                                 wr.flush();
-                                wr.write(jsonObject.toString());
+                                wr.write(String.format("username=%s&password=%s", username, password));
                                 wr.flush();
                                 int responseCode = client.getResponseCode();
+                                System.out.println("response code is:");
+                                System.out.println(responseCode);
+
+                                String responseBody = client.getResponseMessage();
+                                System.out.println("responseBody: " + responseBody);
+
                                 if(responseCode == 200){
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
+                                } else {
+                                    // TODO: AlertDialog
                                 }
-                                System.out.println("response code is:");
-                                System.out.println(responseCode);
+
                             } catch (IOException e) {
                                 System.out.println(e.getMessage());
                                 e.printStackTrace();
@@ -75,19 +78,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
-    }
-
-    private JSONObject formatDataAsJson(){
-        JSONObject  jsonObject = new JSONObject();
-        try {
-            jsonObject.accumulate("username", username);
-            jsonObject.accumulate("password", password);
-        }catch(Exception e){
-            System.out.println("failed to create json");
-        }
-        String json = jsonObject.toString();
-        System.out.print("This is what jason file looks like:");
-        System.out.println(json);
-        return jsonObject;
     }
 }
