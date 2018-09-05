@@ -3,14 +3,13 @@ package com.hfad.zhongyi;
 public class PersonalInfo {
     private String gender = "";
     private Integer age = 0;
-    private String email = "";
+    private String username = "";
     private String name = "";
     private String password = "";
 
     PersonalInfo(String gender, Integer age, String email, String name, String password){
         this.gender = gender;
         this.age = age;
-        this.email = email;
         this.name = name;
         this.password = password;
     }
@@ -30,10 +29,6 @@ public class PersonalInfo {
     public Integer getAge(){
         return this.age;
     }
-
-    public void setEmail(String email){ this.email = email; }
-
-    public String getEmail() { return this.email; }
 
     public void setName(String name){ this.name = name; }
 
