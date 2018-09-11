@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".CameraActivity">
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/camera_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -17,23 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/picture_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:color/black" />
-
         <FrameLayout
             android:id="@+id/camera_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_gravity="center"/>
 
-        </FrameLayout>
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/picture_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/button_take_pic"

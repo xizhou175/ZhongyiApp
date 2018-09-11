@@ -63,16 +63,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        if (mCamera != null) {
-            try {
-                mCamera.reconnect();
-                mCamera.startPreview();
-            } catch (RuntimeException e) {
-                Log.d(TAG, "RuntimeException on Resume: " + e.getMessage());
-                startCamera();
-            } catch (IOException e) {
-                Log.d(TAG, "IOException on Resume: " + e.getMessage());
-            }
+        if (mCamera == null) {
+            startCamera();
         }
         if (viewingPicture) {
             mPreview.setVisibility(View.INVISIBLE);
@@ -83,34 +75,36 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+        releaseCameraAndPreview();
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+        releaseCameraAndPreview();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         releaseCameraAndPreview();
     }
 
     public void onClickAccept(View view) {
-        mPicture.storePicture();
+        // mPicture.storePicture();
         mCamera.stopPreview();
-        Intent intent = new Intent(this, UploadActivity.class);
+        Log.d(TAG, "start HeartRateMonitor");
+
+        Intent intent = new Intent(this, HeartRateMonitor.class);
         intent.putExtra("imageData", mPicture.getImageData());
         startActivity(intent);
+
+        //finish();
+
         // destroy this activity
-        finish();
+        //finish();
         // continueCameraPreview();
     }
 
@@ -205,7 +199,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
         float ratio = (float) width / height;
 
-        RelativeLayout background = findViewById(R.id.camera_background);
+        FrameLayout background = findViewById(R.id.camera_background);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) background.getLayoutParams();
 
         int backgroundHeight = height - params.bottomMargin;
@@ -299,6 +293,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
 
     private void releaseCameraAndPreview() {
         if (mCamera != null) {
+            mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
         }
@@ -363,6 +358,7 @@ class PictureHandler implements Camera.PictureCallback {
     public void onPictureTaken(byte[] data, Camera camera) {
         tmpImageData = data;
         camera.stopPreview();
+        imageView.setImageDrawable(null); // clear imageView
         previewPicture();
         try {
             Log.d(TAG, "call show button callback");
