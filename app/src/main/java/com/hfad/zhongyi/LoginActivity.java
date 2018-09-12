@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -53,16 +53,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 System.out.println("response code is:");
                                 System.out.println(responseCode);
 
-                                String responseBody = client.getResponseMessage();
-                                System.out.println("responseBody: " + responseBody);
-
                                 if(responseCode == 200){
+                                    InputStreamReader reader = new InputStreamReader(client.getInputStream());
+                                    BufferedReader br = new BufferedReader(reader);
+                                    String userId = br.readLine();
+
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {
                                     // TODO: AlertDialog
                                 }
-
                             } catch (IOException e) {
                                 System.out.println(e.getMessage());
                                 e.printStackTrace();
