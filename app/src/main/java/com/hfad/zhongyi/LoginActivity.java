@@ -3,10 +3,14 @@ package com.hfad.zhongyi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +19,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.hfad.zhongyi.Patient.personalInfo;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private String TAG = "LoginActivity";
 
     private String username = "";
     private String password = "";
@@ -50,21 +58,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 wr.write(String.format("username=%s&password=%s", username, password));
                                 wr.flush();
                                 int responseCode = client.getResponseCode();
-                                System.out.println("response code is:");
-                                System.out.println(responseCode);
-
                                 if(responseCode == 200){
                                     InputStreamReader reader = new InputStreamReader(client.getInputStream());
                                     BufferedReader br = new BufferedReader(reader);
-                                    String userId = br.readLine();
-
+                                    String infoStr = br.readLine();
+                                    JSONObject userInfo = new JSONObject(infoStr);
+                                    personalInfo.setId(userInfo.getString("id"));
+                                    personalInfo.setName(userInfo.getString("name"));
+                                    personalInfo.setGender(userInfo.getString("gender"));
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {
                                     // TODO: AlertDialog
                                 }
-                            } catch (IOException e) {
-                                System.out.println(e.getMessage());
+                            } catch (Exception e) {
+                                Log.d(TAG, e.getMessage());
                                 e.printStackTrace();
                             }
                         }

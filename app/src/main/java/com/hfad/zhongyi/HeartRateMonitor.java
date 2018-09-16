@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import static com.hfad.zhongyi.Patient.personalInfo;
+
 
 /**
  * This class extends Activity to handle a picture preview, process the preview
@@ -55,7 +57,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         if (measurementFinished) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 Intent intent = new Intent(this, UploadActivity.class);
-                intent.putExtra("heartBeatData", finalBeats);
+                personalInfo.setHeartRate(finalBeats);
                 intent.putExtra("imageData", imageData);
                 startActivity(intent);
                 finish();

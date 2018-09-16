@@ -4,16 +4,26 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonWriter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -23,15 +33,16 @@ public class UploadActivity extends AppCompatActivity {
     private HttpURLConnection connection;
     private String CRLF = "\r\n";
     private String CharSet = "UTF-8";
-    private byte[] body;
-    private int heartRate = 0;
+    private byte[] image;
 
     /* onClick handlers */
     View.OnClickListener onClickSuccess = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(UploadActivity.this, BodyPartsActivity.class));
-            finish();
+            Intent intent = new Intent(UploadActivity.this, BodyActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     };
     View.OnClickListener onClickRetry = new View.OnClickListener() {
@@ -58,13 +69,12 @@ public class UploadActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (body == null || heartRate == 0) {
+                if (image == null) {
                     Intent intent = getIntent();
-                    body = intent.getByteArrayExtra("imageData");
-                    heartRate = intent.getIntExtra("heartBeatData", 0);
+                    image = intent.getByteArrayExtra("imageData");
                 }
-                if (body != null && heartRate > 0){
-                    if (uploadImage() && uploadHeartRate()) {
+                if (image != null && personalInfo.getHeartRate() > 0){
+                    if (uploadImage() && uploadPatientData()) {
                         uploadFinished(true);
                     } else {
                         uploadFinished(false);
@@ -100,20 +110,20 @@ public class UploadActivity extends AppCompatActivity {
 
     private boolean uploadImage() {
         try {
-            Log.d(TAG, String.format("upload start, file size: %d", body.length));
+            Log.d(TAG, String.format("upload start, file size: %d", image.length));
             connection = (HttpURLConnection) new URL(server_url + "/ingest").openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
             OutputStream output = connection.getOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(output, CharSet);
             writer.append("--" + boundary).append(CRLF);
-            writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"myImage.jpg\"").append(CRLF);
+            writer.append("Content-Disposition: form-data; name=\"file\"; filename=" + getFileName() + ".jpg").append(CRLF);
             writer.append("Content-Transfer-Encoding: binary").append(CRLF);
             writer.append("Content-Type: image/jpeg").append(CRLF).append(CRLF);
             // Note here we need to flush the writer before we write body to output directly
             writer.flush();
             // Note here we need to write directly to output since body is binary
-            output.write(body);
+            output.write(image);
             writer.append(CRLF);
             writer.append("--" + boundary + "--").append(CRLF);
             writer.flush();
@@ -129,22 +139,38 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
-    private boolean uploadHeartRate() {
+    private boolean uploadPatientData() {
         try {
-            connection = (HttpURLConnection) new URL(server_url + "/heartrate").openConnection();
+            connection = (HttpURLConnection) new URL(server_url + "/patientdata").openConnection();
             connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
             OutputStream output = connection.getOutputStream();
-            OutputStreamWriter writer = new OutputStreamWriter(output, CharSet);
-            writer.write("heartRate=" + heartRate);
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(output, CharSet));
+            writePatientData(writer);
             writer.flush();
 
             int responseCode = connection.getResponseCode();
-            Log.d(TAG, String.format("upload heartRate response Code: %d", responseCode));
+            Log.d(TAG, String.format("upload patient data response Code: %d", responseCode));
             return responseCode == 200;
 
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
             return false;
         }
+    }
+
+    private String getFileName() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("Asia/Chongqing"));
+        Date now = cal.getTime();
+        String filename = personalInfo.getId() + "_" + new SimpleDateFormat("dd.MM.yy.hh.mm.ss").format(now);
+        return filename;
+    }
+
+    private void writePatientData(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        writer.name("id").value(getFileName());
+        writer.name("heartRate").value(personalInfo.getHeartRate());
+        writer.endObject();
     }
 }
