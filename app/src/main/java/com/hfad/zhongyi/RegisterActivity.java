@@ -3,21 +3,11 @@ package com.hfad.zhongyi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.EditText;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class RegisterActivity extends Activity implements View.OnClickListener{

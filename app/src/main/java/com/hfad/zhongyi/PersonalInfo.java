@@ -1,18 +1,14 @@
 package com.hfad.zhongyi;
 
 public class PersonalInfo {
-    private String gender = "";
-    private Integer age = 0;
-    private String username = "";
-    private String name = "";
-    private String password = "";
+    private String gender;
+    private Integer age;
+    private String name;
+    private String password;
+    private String id;
 
-    PersonalInfo(String gender, Integer age, String email, String name, String password){
-        this.gender = gender;
-        this.age = age;
-        this.name = name;
-        this.password = password;
-    }
+    private int heartRate;
+
 
     public void setGender(String gender){
         this.gender = gender;
@@ -38,8 +34,25 @@ public class PersonalInfo {
 
     public String getPassword() { return password; }
 
+    public  String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
+
+    public int getHeartRate() {
+        return heartRate;
+    }
+
+    public void setHeartRate(int rate) {
+        this.heartRate = rate;
+    }
+
+    @Override
+    public String toString() {
+        return String.join(" ", name, gender, id);
+    }
+
 }
 
 class Patient{
-    public static PersonalInfo personalInfo = new PersonalInfo("", 0, "", "", "");
+    public static PersonalInfo personalInfo = new PersonalInfo();
 }
