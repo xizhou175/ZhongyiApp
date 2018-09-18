@@ -140,8 +140,20 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
     }
 
     private AlertDialog registerFailedDialog(int code) {
+        String message;
+        switch (code) {
+            case 400:
+                message = "用户已存在，请直接登录";
+                break;
+            case 500:
+                message = "服务器故障，请稍后再试";
+                break;
+            default:
+                message = "未知错误";
+                break;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("错误: " + code).setTitle("注册失败").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+        builder.setMessage(message).setTitle("注册失败").setPositiveButton("确认", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {}
         });
         return builder.create();
