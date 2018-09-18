@@ -1,6 +1,8 @@
 package com.hfad.zhongyi;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 wr.flush();
                                 wr.write(String.format("username=%s&password=%s", username, password));
                                 wr.flush();
-                                int responseCode = client.getResponseCode();
+                                final int responseCode = client.getResponseCode();
                                 if(responseCode == 200){
                                     InputStreamReader reader = new InputStreamReader(client.getInputStream());
                                     BufferedReader br = new BufferedReader(reader);
@@ -70,8 +72,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {
-                                    Log.d(TAG, "Response Code: " + responseCode);
-                                    // TODO: AlertDialog
+                                    Log.d(TAG, "Response Code: " + responseCode + " " + client.getResponseMessage());
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            loginFailedDialog(responseCode).show();
+                                        }
+                                    });
                                 }
                             } catch (Exception e) {
                                 Log.d(TAG, e.getMessage());
@@ -88,5 +95,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    private AlertDialog loginFailedDialog(int code) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("错误: " + code).setTitle("登录失败").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {}
+        });
+        return builder.create();
     }
 }

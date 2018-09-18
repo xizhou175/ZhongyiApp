@@ -115,7 +115,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     wr.flush();
                     wr.write(jsonObject.toString());
                     wr.flush();
-                    int responseCode = client.getResponseCode();
+                    final int responseCode = client.getResponseCode();
                     System.out.println("response code is:");
                     System.out.println(responseCode);
 
@@ -123,7 +123,12 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                         Intent intent = new Intent(PersonalInformationActivity.this, BodyActivity.class);
                         startActivity(intent);
                     } else {
-                        // TODO: AlertDialog
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                registerFailedDialog(responseCode).show();
+                            }
+                        });
                     }
 
                 } catch (IOException e) {
@@ -132,6 +137,14 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                 }
             }
         }).start();
+    }
+
+    private AlertDialog registerFailedDialog(int code) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("错误: " + code).setTitle("注册失败").setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {}
+        });
+        return builder.create();
     }
 
     private JSONObject formatDataAsJson() {
