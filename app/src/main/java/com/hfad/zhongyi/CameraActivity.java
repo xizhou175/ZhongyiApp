@@ -36,6 +36,7 @@ import java.util.concurrent.Callable;
 public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Camera mCamera;
+    private boolean cameraReady = false;
     private TexturePreview mPreview;
     private PictureHandler mPicture;
     private ImageView mImageView;
@@ -63,7 +64,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        if (mCamera == null) {
+        if (mCamera == null && cameraReady) {
             startCamera();
         }
         if (viewingPicture) {
@@ -149,18 +150,17 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     private void requestPermissionsIfNotGranted() {
-        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CameraActivity.this,
                     new String[]{
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        Manifest.permission.CAMERA
                     },
                     MY_PERMISSIONS_REQUEST_CAMERA);
             // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
             // app-defined int constant. The callback method gets the
             // result of the request.
         } else {
+            cameraReady = true;
             startCamera();
             mPicture = new PictureHandler(true, mImageView, showButtonsCallBack);
         }
@@ -175,6 +175,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     public void takePicture(View view) {
+        Log.d(TAG, "takePicture");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -256,7 +257,9 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 Log.d(TAG, "Permission Response");
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    cameraReady = true;
                     startCamera();
+                    mPicture = new PictureHandler(true, mImageView, showButtonsCallBack);
                 } else {
                     Log.d(TAG, "permission denied");
                 }
@@ -356,6 +359,7 @@ class PictureHandler implements Camera.PictureCallback {
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
+        Log.d(TAG, "onPictureTake");
         tmpImageData = data;
         camera.stopPreview();
         imageView.setImageDrawable(null); // clear imageView
