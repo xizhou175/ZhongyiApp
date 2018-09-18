@@ -24,7 +24,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
 
     private AlertDialog alertDialog;
     //private static final String serverURL = "http://10.0.2.2:8080/registration"; // use for emulator
-    private String serverURL = "http://10.0.0.9:8080/registration";
+    // private String serverURL = "http://10.0.0.9:8080/registration";
+    private static final String serverURL = "http://18.188.169.26/registration";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

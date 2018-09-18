@@ -27,7 +27,8 @@ import static com.hfad.zhongyi.Patient.personalInfo;
 public class UploadActivity extends AppCompatActivity {
 
     private String TAG = "upload";
-    private String server_url = "http://10.0.0.9:8080"; // change this to real server address
+    // private String server_url = "http://10.0.0.9:8080";
+    private String server_url = "http://18.188.169.26";
     private String boundary = Long.toHexString(System.currentTimeMillis());
     private HttpURLConnection connection;
     private String CRLF = "\r\n";

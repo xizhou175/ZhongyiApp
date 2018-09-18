@@ -28,7 +28,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String username = "";
     private String password = "";
     //private static final String serverURL = "http://10.0.2.2:8080/login"; // use for emulator
-    private static final String serverURL = "http://10.0.0.9:8080/login";   // use for real phones
+    //private static final String serverURL = "http://10.0.0.9:8080/login";   // use for real phones
+    private static final String serverURL = "http://18.188.169.26/login"; // aws server
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {
+                                    Log.d(TAG, "Response Code: " + responseCode);
                                     // TODO: AlertDialog
                                 }
                             } catch (Exception e) {
