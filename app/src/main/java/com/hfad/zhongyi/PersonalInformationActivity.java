@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static android.app.PendingIntent.getActivity;
 import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class PersonalInformationActivity extends AppCompatActivity implements View.OnClickListener{
@@ -142,7 +141,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
     private AlertDialog registerFailedDialog(int code) {
         String message;
         switch (code) {
-            case 400:
+            case 409:
                 message = "用户已存在，请直接登录";
                 break;
             case 500:
