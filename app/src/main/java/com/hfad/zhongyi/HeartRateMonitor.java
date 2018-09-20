@@ -48,15 +48,14 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private int finalBeats = 0;
     private Lock lock = new ReentrantLock();
 
-    byte[] imageData = null;
 
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
         if (measurementFinished) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 Intent intent = new Intent(this, UploadActivity.class);
+                intent.putExtra("imageFile", getIntent().getStringExtra("imageFile"));
                 personalInfo.setHeartRate(finalBeats);
-                intent.putExtra("imageData", imageData);
                 startActivity(intent);
                 finish();
             } else {
@@ -97,8 +96,6 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         text = (TextView) findViewById(R.id.text);
 
         measurementAlert().show();
-
-        imageData = getIntent().getByteArrayExtra("imageData");
     }
 
     private AlertDialog measurementAlert() {
@@ -119,8 +116,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private void startCamera() {
         if (safeCameraOpen()) {
             setCameraDisplayOrientation(this, 0);
-            mCamera.setPreviewCallback(previewCallback);
-            mPreview = new CameraPreview(this, mCamera);
+            mPreview = new CameraPreview(this, mCamera, previewCallback);
             FrameLayout preview = findViewById(R.id.preview);
             preview.addView(mPreview);
         }
@@ -236,7 +232,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
             if (!processing.compareAndSet(false, true)) return;
 
             int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data, size.width, size.height);
-            // Log.d(TAG, "imgAvg="+imgAvg);
+
             if (imgAvg < 180) {
                 text.setText("--");
                 processing.set(false);
@@ -330,12 +326,14 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
+    PreviewCallback mPreviewCallback;
 
     private String TAG = "CameraPreview";
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context, Camera camera, PreviewCallback cb) {
         super(context);
         mCamera = camera;
+        mPreviewCallback = cb;
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -349,6 +347,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             mCamera.setPreviewDisplay(holder);
+            mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.startPreview();
         } catch (Exception e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
@@ -385,6 +384,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
             Camera.Parameters parameters = mCamera.getParameters();
             // parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             mCamera.setParameters(parameters);
+            mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.startPreview();
         } catch (Exception e){
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());

@@ -12,6 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -70,16 +73,35 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (image == null) {
-                    Intent intent = getIntent();
-                    image = intent.getByteArrayExtra("imageData");
+                    String filepath = getIntent().getStringExtra("imageFile");
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    try {
+                        FileInputStream fis = new FileInputStream(filepath);
+                        int read = 0;
+                        byte[] tmp = new byte[4096];
+                        while (read != -1) {
+                            read = fis.read(tmp, 0, tmp.length);
+                            if (read == -1) {
+                                break;
+                            }
+                            bos.write(tmp, 0, read);
+                        }
+                        image = bos.toByteArray();
+                    } catch (FileNotFoundException e) {
+                        Log.d(TAG, "Image file not found");
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.d(TAG, "Read/write image data failed");
+                        e.printStackTrace();
+                    }
                 }
                 if (image != null && personalInfo.getHeartRate() > 0){
                     if (uploadImage() && uploadPatientData()) {
                         uploadFinished(true);
-                    } else {
-                        uploadFinished(false);
+                        return;
                     }
                 }
+                uploadFinished(false);
             }
         }).start();
     }

@@ -94,19 +94,18 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     public void onClickAccept(View view) {
-        // mPicture.storePicture();
         mCamera.stopPreview();
         Log.d(TAG, "start HeartRateMonitor");
 
-        Intent intent = new Intent(this, HeartRateMonitor.class);
-        intent.putExtra("imageData", mPicture.getImageData());
+        String filepath = mPicture.storePicture();
+        Log.d(TAG, "filepath: " + filepath);
+
+        Intent intent = new Intent(this, UploadActivity.class);
+        intent.putExtra("imageFile", filepath);
         startActivity(intent);
 
-        //finish();
-
         // destroy this activity
-        //finish();
-        // continueCameraPreview();
+        // finish();
     }
 
     public void onClickCancel(View view) {
@@ -374,16 +373,17 @@ class PictureHandler implements Camera.PictureCallback {
 
     private void previewPicture() {
         Bitmap imageBitmap = BitmapFactory.decodeByteArray(tmpImageData, 0, tmpImageData.length);
+        // Log.d("previewPicture", String.format("%d", tmpImageData.length));
         imageView.setImageBitmap(imageBitmap);
         imageView.setVisibility(View.VISIBLE);
     }
 
-    public void storePicture() {
+    public String storePicture() {
         Log.d(TAG, "store picture");
         File pictureFile = getOutputMediaFile();
         if (pictureFile == null) {
-            Log.d(TAG, "Error creating media file, check storage permissions: ");
-            return;
+            Log.d(TAG, "Error creating temp file");
+            return "";
         }
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
@@ -391,9 +391,12 @@ class PictureHandler implements Camera.PictureCallback {
             fos.close();
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
+            return "";
         } catch (IOException e) {
             Log.d(TAG, "Error accessing file: " + e.getMessage());
+            return "";
         }
+        return pictureFile.getPath();
     }
 
     public byte[] getImageData() {
@@ -404,24 +407,13 @@ class PictureHandler implements Camera.PictureCallback {
         if (!permitted) {
             return null;
         }
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "ZhongyiApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("ZhongyiApp", "failed to create directory");
-                return null;
-            }
+        try {
+            File tmpFile = File.createTempFile("tongue_img", null);
+            return tmpFile;
+        } catch (IOException e) {
+            Log.d(TAG, "createTempFile failed");
+            e.printStackTrace();
+            return null;
         }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
-
-        return mediaFile;
     }
 }
