@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +45,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     private boolean viewingPicture = false;
     private final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
     private final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private SeekBar zoomSeekBar;
+
     private final String TAG = "CameraActivity";
 
     @Override
@@ -57,6 +60,32 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
                 return null;
             }
         };
+        zoomSeekBar = findViewById(R.id.zoomSeekBar);
+        zoomSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (mCamera == null) {
+                    return;
+                }
+                try {
+                    // YOur code here in set zoom for pinch zooming, sth like this
+                    if (mCamera.getParameters().isZoomSupported()) {
+                        Camera.Parameters params = mCamera.getParameters();
+                        params.setZoom(i);
+                        mCamera.setParameters(params);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
         requestPermissionsIfNotGranted();
     }
 
@@ -100,7 +129,7 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         String filepath = mPicture.storePicture();
         Log.d(TAG, "filepath: " + filepath);
 
-        Intent intent = new Intent(this, UploadActivity.class);
+        Intent intent = new Intent(this, HeartRateMonitor.class);
         intent.putExtra("imageFile", filepath);
         startActivity(intent);
 
@@ -132,6 +161,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         // show take pic button
         Button button = findViewById(R.id.button_take_pic);
         button.setVisibility(View.VISIBLE);
+        // show seek bar
+        zoomSeekBar.setVisibility(View.VISIBLE);
         viewingPicture = false;
     }
 
@@ -145,6 +176,8 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
         // hide take pic button
         Button button = findViewById(R.id.button_take_pic);
         button.setVisibility(View.INVISIBLE);
+        // hide seek bar
+        zoomSeekBar.setVisibility(View.INVISIBLE);
         viewingPicture = true;
     }
 
@@ -184,12 +217,12 @@ public class CameraActivity extends AppCompatActivity implements ActivityCompat.
     }
 
     private void scalePreview() {
-        Camera.Parameters camParams = mCamera.getParameters();
-
-        if (camParams.isZoomSupported()) {
-            camParams.setZoom(camParams.getMaxZoom());
-        }
-        mCamera.setParameters(camParams);
+//        Camera.Parameters camParams = mCamera.getParameters();
+//
+//        if (camParams.isZoomSupported()) {
+//            camParams.setZoom(camParams.getMaxZoom());
+//        }
+//        mCamera.setParameters(camParams);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -373,7 +406,6 @@ class PictureHandler implements Camera.PictureCallback {
 
     private void previewPicture() {
         Bitmap imageBitmap = BitmapFactory.decodeByteArray(tmpImageData, 0, tmpImageData.length);
-        // Log.d("previewPicture", String.format("%d", tmpImageData.length));
         imageView.setImageBitmap(imageBitmap);
         imageView.setVisibility(View.VISIBLE);
     }
