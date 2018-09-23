@@ -1,7 +1,7 @@
 package com.hfad.zhongyi;
 
 public class PersonalInfo {
-    private String gender;
+    private String gender = "male";
     private Integer age;
     private String name;
     private String password;

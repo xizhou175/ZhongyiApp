@@ -61,6 +61,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
             //populate listview
             ArrayList<DataModel> datamodels = new ArrayList<>();
+            System.out.println("number of others:" + ListOfOthers.size());
             for (String s : ListOfOthers) {
                 datamodels.add(new DataModel(s));
             }
@@ -68,6 +69,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
             lv.setAdapter(adapter);
              lv.setOnItemClickListener(this);
+            
             lv.post(new Runnable() {
                 @Override
                 public void run() {
@@ -83,6 +85,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     //list view onItemCLickListener
     @Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+        System.out.println("position:" + position);
         ColorDrawable colorDrawable = (ColorDrawable)lv.getChildAt(position).getBackground();
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();

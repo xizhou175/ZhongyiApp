@@ -1,8 +1,21 @@
 package com.hfad.zhongyi;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.provider.Settings;
+import android.util.Log;
 
 class Page {
     private String description;
@@ -14,24 +27,67 @@ class Page {
 
     Page(String des){
 
+
+        AssetManager mngr = MyApplication.getContext().getAssets();
+
+
         if(des.equals("head")) {
-            String[] headSymptoms = {"头1", "头2", "头3", "头4", "头5", "头6"};
-            description = "head symptoms";
-            for(int i = 0; i < headSymptoms.length; i++){
-                symptoms.add(headSymptoms[i]);
+
+            ArrayList<String> headSymptoms = new ArrayList<String>();
+
+            try {
+                InputStream fstream =  mngr.open("headAndface");
+                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    // process the line.
+                    String s = line.split("\t")[0];
+                    System.out.println(s);
+                    headSymptoms.add(s);
+                }
+                br.close();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+
+            for(int i = 0; i < headSymptoms.size(); i++){
+                symptoms.add(headSymptoms.get(i));
             }
             int id = 1;
             for(String key : headSymptoms){
                 id2symptom.put(id, key);
                 symptom2id.put(key, id);
-                id += 1;
+                if(id++ == 6) break;
+            }
+            for(id = 7; id <= headSymptoms.size(); id++){
+                id2symptom.put(id, headSymptoms.get(id - 1));
+                symptom2id.put(headSymptoms.get(id - 1), id);
+                otherSymptoms.add(headSymptoms.get(id - 1));
             }
         }
 
         else if(des.equals("chest")) {
-            String[] chestSymptoms = {"胸闷", "气短", "胸痛", "咳嗽", "咳痰", "脓胸", "血胸", "气胸"};
-            for(int i = 0; i < chestSymptoms.length; i++){
-                symptoms.add(chestSymptoms[i]);
+
+            ArrayList<String> chestSymptoms = new ArrayList<String>();
+
+            try {
+                InputStream fstream =  mngr.open("chest");
+                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    // process the line.
+                    String s = line.split("\t")[0];
+                    chestSymptoms.add(s);
+                }
+                br.close();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+
+            for(int i = 0; i < chestSymptoms.size(); i++){
+                symptoms.add(chestSymptoms.get(i));
             }
             int id = 1;
             for(String key : chestSymptoms){
@@ -39,10 +95,10 @@ class Page {
                 symptom2id.put(key, id);
                 if(id++ == 6) break;
             }
-            for(id = 7; id <= chestSymptoms.length; id++){
-                id2symptom.put(id, chestSymptoms[id - 1]);
-                symptom2id.put(chestSymptoms[id - 1], id);
-                otherSymptoms.add(chestSymptoms[id - 1]);
+            for(id = 7; id <= chestSymptoms.size(); id++){
+                id2symptom.put(id, chestSymptoms.get(id - 1));
+                symptom2id.put(chestSymptoms.get(id - 1), id);
+                otherSymptoms.add(chestSymptoms.get(id - 1));
             }
 
         }
@@ -99,6 +155,7 @@ class Pages {
     public static Page[] pages = {
         new Page("head"),
         new Page("chest"),
-        new Page("back")
+        new Page("back"),
+        new Page("abdomen"),
     };
 }

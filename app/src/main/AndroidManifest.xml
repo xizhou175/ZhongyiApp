@@ -17,9 +17,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name="com.hfad.zhongyi.MyApplication"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".BodyActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -32,7 +33,7 @@
         <activity android:name=".BodyPartsActivity" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".HeartRateMonitor" />
-        <activity android:name=".BodyActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".PersonalInformationActivity" />
         <activity android:name=".RegisterActivity" />
     </application>
