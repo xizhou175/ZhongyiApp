@@ -29,7 +29,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.TreeSet;
 
-public class BodySpecificFragments extends Fragment implements View.OnClickListener, ListView.OnItemClickListener{
+public class BodySpecificFragments extends Fragment implements View.OnClickListener{
 
     private int pageNum = -1;
     private Page page = null;
@@ -61,14 +61,13 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
             //populate listview
             ArrayList<DataModel> datamodels = new ArrayList<>();
-            System.out.println("number of others:" + ListOfOthers.size());
             for (String s : ListOfOthers) {
                 datamodels.add(new DataModel(s));
             }
 
             CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
             lv.setAdapter(adapter);
-             lv.setOnItemClickListener(this);
+             //lv.setOnItemClickListener(this);
             
             lv.post(new Runnable() {
                 @Override
@@ -83,26 +82,30 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     }
 
     //list view onItemCLickListener
-    @Override
+    /*@Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-        System.out.println("position:" + position);
-        ColorDrawable colorDrawable = (ColorDrawable)lv.getChildAt(position).getBackground();
+        int firstListItemPosition = lv.getFirstVisiblePosition();
+        System.out.println("firstLIstItemPosition:" + firstListItemPosition);
+        int visiblePosition = position - firstListItemPosition;
+        System.out.println("visiblePosition:" + visiblePosition);
+        ColorDrawable colorDrawable = (ColorDrawable)v.getBackground();
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();
+        System.out.println(symptom);
         int symId = page.getSymptom2id().get(symptom);
         if(colorDrawable.getColor() != getResources().getColor(R.color.holo_blue_light)) {
-            lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
-            ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
+            v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
+            ImageView plusOrMinus = v.findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.if_minus_118643);
             page.getChosen().add(symId);
         }
         else {
-            lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.lightgrey));
-            ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
+            v.setBackgroundColor(getResources().getColor(R.color.lightgrey));
+            ImageView plusOrMinus = v.findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.plus);
             page.getChosen().remove(symId);
         }
-    }
+    }*/
 
 
     private void inflateButtons(GridLayout layout) {
