@@ -144,13 +144,13 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         if(view != null){
             TextView title = view.findViewById(R.id.title);
             if(pageNum == 0){
-                title.setText("头部症状");
-            }
-            else if(pageNum == 1){
+                title.setText("头部/面部症状");
+            } else if(pageNum == 1){
                 title.setText("胸部症状");
-            }
-            else if(pageNum == 2){
-                title.setText("背部症状");
+            } else if(pageNum == 2){
+                title.setText("二便症状");
+            } else if (pageNum == 3) {
+                title.setText("腹部症状");
             }
         }
     }

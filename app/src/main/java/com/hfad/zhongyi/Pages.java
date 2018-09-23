@@ -25,96 +25,34 @@ class Page {
     HashSet<String> symptoms = new HashSet<>();
     ArrayList<String> otherSymptoms = new ArrayList<String>();
 
-    Page(String des){
-
-
+    private void getSymptomsFromFile(String filename) {
         AssetManager mngr = MyApplication.getContext().getAssets();
-
-
-        if(des.equals("head")) {
-
-            ArrayList<String> headSymptoms = new ArrayList<String>();
-
-            try {
-                InputStream fstream =  mngr.open("headAndface");
-                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-                String line = "";
-                while ((line = br.readLine()) != null) {
-                    // process the line.
-                    String s = line.split("\t")[0];
-                    System.out.println(s);
-                    headSymptoms.add(s);
+        try {
+            InputStream fstream =  mngr.open(filename);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            String line;
+            int id = 0;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                String s = line.split("\t")[0];
+                // System.out.println(s);
+                symptoms.add(s);
+                id2symptom.put(id, s);
+                symptom2id.put(s, id);
+                if (id >= 6) {
+                    otherSymptoms.add(s);
                 }
-                br.close();
+                id++;
             }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-
-            for(int i = 0; i < headSymptoms.size(); i++){
-                symptoms.add(headSymptoms.get(i));
-            }
-            int id = 1;
-            for(String key : headSymptoms){
-                id2symptom.put(id, key);
-                symptom2id.put(key, id);
-                if(id++ == 6) break;
-            }
-            for(id = 7; id <= headSymptoms.size(); id++){
-                id2symptom.put(id, headSymptoms.get(id - 1));
-                symptom2id.put(headSymptoms.get(id - 1), id);
-                otherSymptoms.add(headSymptoms.get(id - 1));
-            }
+            br.close();
         }
-
-        else if(des.equals("chest")) {
-
-            ArrayList<String> chestSymptoms = new ArrayList<String>();
-
-            try {
-                InputStream fstream =  mngr.open("chest");
-                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-                String line = "";
-                while ((line = br.readLine()) != null) {
-                    // process the line.
-                    String s = line.split("\t")[0];
-                    chestSymptoms.add(s);
-                }
-                br.close();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-
-            for(int i = 0; i < chestSymptoms.size(); i++){
-                symptoms.add(chestSymptoms.get(i));
-            }
-            int id = 1;
-            for(String key : chestSymptoms){
-                id2symptom.put(id, key);
-                symptom2id.put(key, id);
-                if(id++ == 6) break;
-            }
-            for(id = 7; id <= chestSymptoms.size(); id++){
-                id2symptom.put(id, chestSymptoms.get(id - 1));
-                symptom2id.put(chestSymptoms.get(id - 1), id);
-                otherSymptoms.add(chestSymptoms.get(id - 1));
-            }
-
+        catch(IOException e){
+            e.printStackTrace();
         }
-        else if(des.equals("back")) {
-            description = "back symptoms";
-            String[] backSymptoms = {"背1", "背2", "背3", "背4", "背5", "背6"};
-            for(int i = 0; i < backSymptoms.length; i++){
-                symptoms.add(backSymptoms[i]);
-            }
-            int id = 1;
-            for(String key : backSymptoms){
-                id2symptom.put(id, key);
-                symptom2id.put(key, id);
-                id += 1;
-            }
-        }
+    }
+
+    Page(String des){
+        getSymptomsFromFile(des);
     }
 
     public HashSet<String> getSymptoms() {
@@ -153,9 +91,9 @@ class Page {
 
 class Pages {
     public static Page[] pages = {
-        new Page("head"),
+        new Page("headAndface"),
         new Page("chest"),
-        new Page("back"),
+        new Page("groin"),
         new Page("abdomen"),
     };
 }
