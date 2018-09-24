@@ -29,13 +29,16 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.TreeSet;
 
-public class BodySpecificFragments extends Fragment implements View.OnClickListener{
+public class BodySpecificFragments extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener{
 
     private int pageNum = -1;
     private Page page = null;
     ArrayList<String> ListOfOthers = new ArrayList<String>();
     View view;
     ListView lv;
+    private ArrayList<Boolean> checkList = new ArrayList<Boolean>();
+    ArrayList<DataModel> datamodels = new ArrayList<>();
+    CustomAdapterForDropDown adapterForDropDown;
 
     public static BodySpecificFragments newInstance(int pg) {
         Bundle args = new Bundle();
@@ -46,6 +49,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+
         view = inflater.inflate(R.layout.fragment_specific_symptoms, container, false);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -54,27 +58,27 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         }
         setPageTitle(view);
         lv = view.findViewById(R.id.lvOfOthers);
+
         GridLayout buttonsLayout = view.findViewById(R.id.buttons_layout);
         if (pageNum != -1 && page != null) { // only inflate when we receive the pageNum arg and init page obj
             inflateButtons(buttonsLayout);
             ListOfOthers = page.getOtherSymptoms();
 
             //populate listview
-            ArrayList<DataModel> datamodels = new ArrayList<>();
+
             for (String s : ListOfOthers) {
                 datamodels.add(new DataModel(s));
             }
 
+            for(int i = 0; i < datamodels.size(); i++){
+                checkList.add(false);
+            }
+
             CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
             lv.setAdapter(adapter);
-             //lv.setOnItemClickListener(this);
-            
-            lv.post(new Runnable() {
-                @Override
-                public void run() {
-                    setListView(lv);
-                }
-            });
+
+            //lv.setOnItemClickListener(this);
+
             ImageView DropDownSign = view.findViewById(R.id.DropDownSign);
             DropDownSign.setOnClickListener(this);
         }
@@ -82,13 +86,27 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     }
 
     //list view onItemCLickListener
-    /*@Override
+    @Override
     public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-        int firstListItemPosition = lv.getFirstVisiblePosition();
-        System.out.println("firstLIstItemPosition:" + firstListItemPosition);
-        int visiblePosition = position - firstListItemPosition;
-        System.out.println("visiblePosition:" + visiblePosition);
-        ColorDrawable colorDrawable = (ColorDrawable)v.getBackground();
+
+        if(checkList.get(position) == false) {
+            System.out.println((Integer)v.getTag());
+            checkList.set(position, true);
+        }
+        else {
+            System.out.println(position);
+            checkList.set(position, false);
+        }
+
+        datamodels.get(position).setSymptom("1");
+
+        adapterForDropDown = new CustomAdapterForDropDown(datamodels, view.getContext());
+
+
+        adapterForDropDown.notifyDataSetChanged();
+        lv.setAdapter(adapterForDropDown);
+
+        /*ColorDrawable colorDrawable = (ColorDrawable)v.getBackground();
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();
         System.out.println(symptom);
@@ -104,8 +122,8 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             ImageView plusOrMinus = v.findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.plus);
             page.getChosen().remove(symId);
-        }
-    }*/
+        }*/
+    }
 
 
     private void inflateButtons(GridLayout layout) {

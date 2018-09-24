@@ -10,4 +10,6 @@ public class DataModel {
     public String getSymptom(){
         return this.symptom;
     }
+
+    public void setSymptom(String s){this.symptom = s;}
 }

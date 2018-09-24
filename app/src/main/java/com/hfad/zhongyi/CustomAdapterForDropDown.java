@@ -77,17 +77,16 @@ public class CustomAdapterForDropDown extends ArrayAdapter<DataModel> {
         viewHolder.delete.setTag(position);
         viewHolder.delete.setOnClickListener(mListener);
         if(checkList.get(position) == false){
-            System.out.println("position:" + position);
+            //System.out.println("position:" + position);
             ImageView plusOrMinus = viewHolder.delete.findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.plus);
         }
         else{
-            System.out.println("position:" + position);
+            //System.out.println("position:" + position);
             ImageView plusOrMinus = viewHolder.delete.findViewById(R.id.removeSign);
             plusOrMinus.setImageResource(R.drawable.if_minus_118643);
         }
         convertView.setTag(viewHolder);
-
 
         return convertView;
     }
