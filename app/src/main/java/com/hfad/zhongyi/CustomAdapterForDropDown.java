@@ -40,8 +40,6 @@ public class CustomAdapterForDropDown extends ArrayAdapter<DataModel> {
         ImageView delete;
     }
 
-    private int lastPosition = -1;
-
     @Override
     public int getCount() {
         return ((null != dataSet) ? dataSet.size() : 0);
@@ -61,48 +59,32 @@ public class CustomAdapterForDropDown extends ArrayAdapter<DataModel> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         DataModel dataModel = getItem(position);
-        CustomAdapter.ViewHolder viewHolder;
+        ViewHolder viewHolder;
 
         if(convertView == null){
-            viewHolder = new CustomAdapter.ViewHolder();
+            viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.row_item_dropdown, parent, false);
             viewHolder.txtsym = (TextView) convertView.findViewById(R.id.symptom);
-            viewHolder.delete = (ImageView)convertView.findViewById(R.id.removeSign);
-        }else{
-            viewHolder = (CustomAdapter.ViewHolder) convertView.getTag();
+            viewHolder.delete = (ImageView) convertView.findViewById(R.id.removeSign);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         viewHolder.txtsym.setText(dataModel.getSymptom());
         viewHolder.delete.setTag(position);
-        viewHolder.delete.setOnClickListener(mListener);
-        if(checkList.get(position) == false){
-            //System.out.println("position:" + position);
-            ImageView plusOrMinus = viewHolder.delete.findViewById(R.id.removeSign);
-            plusOrMinus.setImageResource(R.drawable.plus);
-        }
-        else{
-            //System.out.println("position:" + position);
-            ImageView plusOrMinus = viewHolder.delete.findViewById(R.id.removeSign);
+
+        ImageView plusOrMinus = viewHolder.delete.findViewById(R.id.removeSign);
+        if(dataModel.getSelected() == true) {
             plusOrMinus.setImageResource(R.drawable.if_minus_118643);
+            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.holo_blue_light));
+        } else {
+            plusOrMinus.setImageResource(R.drawable.plus);
+            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.lightgrey));
         }
         convertView.setTag(viewHolder);
 
         return convertView;
     }
-
-    View.OnClickListener mListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(checkList.get((Integer)v.getTag()) == false) {
-                System.out.println((Integer)v.getTag());
-                checkList.set((Integer) v.getTag(), true);
-            }
-            else {
-                System.out.println((Integer)v.getTag());
-                checkList.set((Integer)v.getTag(), false);
-            }
-        }
-    };
 
 }

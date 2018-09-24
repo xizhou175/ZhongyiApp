@@ -1,15 +1,27 @@
 package com.hfad.zhongyi;
 
 public class DataModel {
-    String symptom;
+    private String symptom;
+    private boolean selected;
 
-    public DataModel(String s){
-        this.symptom = s;
+    public DataModel(String symptom, boolean selected){
+        this.symptom = symptom;
+        this.selected = selected;
     }
 
-    public String getSymptom(){
+    public String getSymptom() {
         return this.symptom;
     }
 
-    public void setSymptom(String s){this.symptom = s;}
+    public void setSymptom(String s) {
+        this.symptom = s;
+    }
+
+    public boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean select) {
+        selected = select;
+    }
 }
