@@ -33,7 +33,7 @@ import java.util.List;
 public class SummaryOfSymptoms extends AppCompatActivity {
 
     private LinearLayout parentLinearLayout;
-    ArrayList<DataModel> datamodels;
+    ArrayList<DataModel> dataModels;
     private static CustomAdapter adapter;
     public static final String MESSAGE = "message";
     private String message = "";
@@ -85,7 +85,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     }
 
     public void addListView(){
-        ArrayList<String> overallList = new ArrayList<String>();
+        ArrayList<String> overallList = new ArrayList<>();
         for(int i = 0; i < Pages.pages.length; i++){
             Page page = Pages.pages[i];
             HashSet<Integer> symptomsChosen = page.getChosen();
@@ -94,23 +94,17 @@ public class SummaryOfSymptoms extends AppCompatActivity {
             int j = 0;
             for(Integer key : symptomsChosen){
                 chosenSymptoms[j++] = id2symptom.get(key);
-                //System.out.println(chosenSymptoms[j - 1]);
             }
-            ArrayList<String> symptomsList = new ArrayList<String>(Arrays.asList(chosenSymptoms));
+            ArrayList<String> symptomsList = new ArrayList<>(Arrays.asList(chosenSymptoms));
             overallList.addAll(symptomsList);
         }
 
-        datamodels = new ArrayList<>();
+        dataModels = new ArrayList<>();
         for(String s : overallList){
-            datamodels.add(new DataModel(s));
+            dataModels.add(new DataModel(s, false));
         }
 
-        for(DataModel d : datamodels){
-
-            System.out.println(d.getSymptom());
-        }
-
-        adapter = new CustomAdapter(datamodels, getApplicationContext());
+        adapter = new CustomAdapter(dataModels, getApplicationContext());
         ListView lv = findViewById(R.id.lv);
         lv.setAdapter(adapter);
     }

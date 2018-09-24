@@ -33,12 +33,11 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
     private int pageNum = -1;
     private Page page = null;
-    ArrayList<String> ListOfOthers = new ArrayList<String>();
+    ArrayList<String> ListOfOthers = new ArrayList<>();
     View view;
     ListView lv;
-    private ArrayList<Boolean> checkList = new ArrayList<Boolean>();
-    ArrayList<DataModel> datamodels = new ArrayList<>();
-    CustomAdapterForDropDown adapterForDropDown;
+    ArrayList<DataModel> dataModels = new ArrayList<>();
+    CustomAdapterForDropDown adapter;
 
     public static BodySpecificFragments newInstance(int pg) {
         Bundle args = new Bundle();
@@ -64,20 +63,16 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             inflateButtons(buttonsLayout);
             ListOfOthers = page.getOtherSymptoms();
 
-            //populate listview
-
+            //populate ListView
             for (String s : ListOfOthers) {
-                datamodels.add(new DataModel(s));
+                Integer symId = page.symptom2id.get(s);
+                dataModels.add(new DataModel(s, page.getChosen().contains(symId)));
             }
 
-            for(int i = 0; i < datamodels.size(); i++){
-                checkList.add(false);
-            }
-
-            CustomAdapterForDropDown adapter = new CustomAdapterForDropDown(datamodels, view.getContext());
+            adapter = new CustomAdapterForDropDown(dataModels, view.getContext());
             lv.setAdapter(adapter);
 
-            //lv.setOnItemClickListener(this);
+            lv.setOnItemClickListener(this);
 
             ImageView DropDownSign = view.findViewById(R.id.DropDownSign);
             DropDownSign.setOnClickListener(this);
@@ -87,42 +82,23 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
     //list view onItemCLickListener
     @Override
-    public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+    public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
 
-        if(checkList.get(position) == false) {
-            System.out.println((Integer)v.getTag());
-            checkList.set(position, true);
-        }
-        else {
-            System.out.println(position);
-            checkList.set(position, false);
-        }
+        DataModel item = dataModels.get(position);
 
-        datamodels.get(position).setSymptom("1");
-
-        adapterForDropDown = new CustomAdapterForDropDown(datamodels, view.getContext());
-
-
-        adapterForDropDown.notifyDataSetChanged();
-        lv.setAdapter(adapterForDropDown);
-
-        /*ColorDrawable colorDrawable = (ColorDrawable)v.getBackground();
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();
-        System.out.println(symptom);
-        int symId = page.getSymptom2id().get(symptom);
-        if(colorDrawable.getColor() != getResources().getColor(R.color.holo_blue_light)) {
-            v.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
-            ImageView plusOrMinus = v.findViewById(R.id.removeSign);
-            plusOrMinus.setImageResource(R.drawable.if_minus_118643);
+        Log.d("onItemClick", "pos: "+position + " " + "symptom: " + symptom);
+        Integer symId = page.getSymptom2id().get(symptom);
+        if (item.getSelected() == true) {
+            item.setSelected(false);
+            page.getChosen().remove(symId);
+        } else {
+            item.setSelected(true);
             page.getChosen().add(symId);
         }
-        else {
-            v.setBackgroundColor(getResources().getColor(R.color.lightgrey));
-            ImageView plusOrMinus = v.findViewById(R.id.removeSign);
-            plusOrMinus.setImageResource(R.drawable.plus);
-            page.getChosen().remove(symId);
-        }*/
+
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -176,10 +152,6 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         }
     }
 
-    public void setPageNum(int num){
-        this.pageNum = num;
-    }
-
     @Override
     public void onClick(View v) {
         ListView lv = view.findViewById(R.id.lvOfOthers);
@@ -190,20 +162,4 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             lv.setVisibility(View.INVISIBLE);
         }
     }
-
-    public void setListView(ListView lv) {
-        for(int position = 0; position < lv.getChildCount(); position++){
-            View v = lv.getChildAt(position);
-            TextView symView = v.findViewById(R.id.symptom);
-            String symptom = symView.getText().toString();
-            int symId = page.getSymptom2id().get(symptom);
-            if(page.getChosen().contains(symId)){
-                lv.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
-                ImageView plusOrMinus = lv.getChildAt(position).findViewById(R.id.removeSign);
-                plusOrMinus.setImageResource(R.drawable.if_minus_118643);
-            }
-        }
-    }
-
-
 }
