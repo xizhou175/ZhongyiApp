@@ -29,6 +29,8 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.TreeSet;
 
+import static com.hfad.zhongyi.Patient.personalInfo;
+
 public class BodySpecificFragments extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener{
 
     private int pageNum = -1;
@@ -93,9 +95,11 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         if (item.getSelected() == true) {
             item.setSelected(false);
             page.getChosen().remove(symId);
+            personalInfo.removeSymptom(page.getId2symptom().get(id));
         } else {
             item.setSelected(true);
             page.getChosen().add(symId);
+            personalInfo.addSymptom(page.getId2symptom().get(id));
         }
 
         adapter.notifyDataSetChanged();
@@ -126,9 +130,11 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                     if (!page.getChosen().contains(id)) {
                         button.setBackgroundResource(R.drawable.my_button_pressed);
                         page.getChosen().add(id);
+                        personalInfo.addSymptom(page.getId2symptom().get(id));
                     } else {
                         button.setBackgroundResource(R.drawable.my_button_released);
                         page.getChosen().remove(id);
+                        personalInfo.removeSymptom(page.getId2symptom().get(id));
                     }
                 }
             });
@@ -144,9 +150,9 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                 title.setText("头部/面部症状");
             } else if(pageNum == 1){
                 title.setText("胸部症状");
-            } else if(pageNum == 2){
+            } else if(pageNum == 3){
                 title.setText("二便症状");
-            } else if (pageNum == 3) {
+            } else if (pageNum == 2) {
                 title.setText("腹部症状");
             }
         }

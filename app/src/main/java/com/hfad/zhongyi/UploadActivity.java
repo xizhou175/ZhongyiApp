@@ -193,6 +193,11 @@ public class UploadActivity extends AppCompatActivity {
         writer.beginObject();
         writer.name("id").value(getFileName());
         writer.name("heartRate").value(personalInfo.getHeartRate());
+        writer.beginArray();
+        for(String symptom : personalInfo.getSymptoms()){
+            writer.name("symptoms").value(symptom);
+        }
+        writer.endArray();
         writer.endObject();
     }
 }

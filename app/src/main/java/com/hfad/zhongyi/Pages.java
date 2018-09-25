@@ -93,7 +93,7 @@ class Pages {
     public static Page[] pages = {
         new Page("headAndface"),
         new Page("chest"),
-        new Page("groin"),
-        new Page("abdomen"),
+            new Page("abdomen"),
+        new Page("groin")
     };
 }

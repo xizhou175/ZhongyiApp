@@ -5,6 +5,8 @@
     <string name="back">反面</string>
     <string name="head">头部</string>
     <string name="chest">胸部</string>
+    <string name="abdomen">腹部</string>
+    <string name="groin">腹股</string>
     <string name="head_specific">头部症状</string>
     <string name="chest_specific">胸部症狀</string>
     <string name="back_specific">背部症狀</string>

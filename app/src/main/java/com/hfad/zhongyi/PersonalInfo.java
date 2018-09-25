@@ -1,11 +1,14 @@
 package com.hfad.zhongyi;
 
+import java.util.ArrayList;
+
 public class PersonalInfo {
     private String gender = "male";
     private Integer age;
     private String name;
     private String password;
     private String id;
+    private ArrayList<String> symptoms = new ArrayList<String>();
 
     private int heartRate;
 
@@ -45,6 +48,12 @@ public class PersonalInfo {
     public void setHeartRate(int rate) {
         this.heartRate = rate;
     }
+
+    public void addSymptom(String symptom) { symptoms.add(symptom); }
+
+    public void removeSymptom(String symptom) { symptoms.remove(symptom); }
+
+    public ArrayList<String> getSymptoms() { return this.symptoms; }
 
     @Override
     public String toString() {

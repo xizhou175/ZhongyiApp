@@ -57,8 +57,11 @@ public class BodyActivity extends AppCompatActivity {
             intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "1");
         }
 
-        else if(view.getId() == R.id.backText) {
+        else if(view.getId() == R.id.abdomenText){
             intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "2");
+        }
+        else if(view.getId() == R.id.groinText){
+            intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "3");
         }
         startActivity(intent);
     }
