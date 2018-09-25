@@ -91,9 +91,12 @@ class Page {
 
 class Pages {
     public static Page[] pages = {
-        new Page("headAndface"),
-        new Page("chest"),
+            new Page("headAndface"),
+            new Page("chest"),
             new Page("abdomen"),
-        new Page("groin")
+            new Page("groin"),
+            new Page("reproduction"),
+            new Page("limbs"),
+            new Page("body")
     };
 }

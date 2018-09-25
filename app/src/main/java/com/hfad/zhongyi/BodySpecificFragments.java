@@ -154,6 +154,12 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                 title.setText("二便症状");
             } else if (pageNum == 2) {
                 title.setText("腹部症状");
+            } else if(pageNum == 4){
+                title.setText("生殖症状");
+            } else if(pageNum == 5){
+                title.setText("四肢症状");
+            } else if(pageNum == 6){
+                title.setText("其他");
             }
         }
     }

@@ -63,6 +63,15 @@ public class BodyActivity extends AppCompatActivity {
         else if(view.getId() == R.id.groinText){
             intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "3");
         }
+        else if(view.getId() == R.id.reproductionText){
+            intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "4");
+        }
+        else if(view.getId() == R.id.limbsText){
+            intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "5");
+        }
+        else if(view.getId() == R.id.bodyText){
+            intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "6");
+        }
         startActivity(intent);
     }
 }
