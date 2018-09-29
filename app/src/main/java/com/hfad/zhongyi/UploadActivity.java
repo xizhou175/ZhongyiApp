@@ -37,6 +37,7 @@ public class UploadActivity extends AppCompatActivity {
     private String CRLF = "\r\n";
     private String CharSet = "UTF-8";
     private byte[] image;
+    private String file_id;
 
     /* onClick handlers */
     View.OnClickListener onClickSuccess = new View.OnClickListener() {
@@ -140,7 +141,7 @@ public class UploadActivity extends AppCompatActivity {
             OutputStream output = connection.getOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(output, CharSet);
             writer.append("--" + boundary).append(CRLF);
-            writer.append("Content-Disposition: form-data; name=\"file\"; filename=" + getFileName() + ".jpg").append(CRLF);
+            writer.append("Content-Disposition: form-data; name=\"file\"; filename=" + getFileId() + ".jpg").append(CRLF);
             writer.append("Content-Transfer-Encoding: binary").append(CRLF);
             writer.append("Content-Type: image/jpeg").append(CRLF).append(CRLF);
             // Note here we need to flush the writer before we write body to output directly
@@ -182,17 +183,20 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
-    private String getFileName() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getTimeZone("Asia/Chongqing"));
-        Date now = cal.getTime();
-        String filename = personalInfo.getId() + "_" + new SimpleDateFormat("dd.MM.yy.hh.mm.ss").format(now);
-        return filename;
+    private String getFileId() {
+        if (file_id == null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeZone(TimeZone.getTimeZone("Asia/Chongqing"));
+            Date now = cal.getTime();
+            String filename = personalInfo.getId() + "_" + new SimpleDateFormat("ddMMyyhhmmss").format(now);
+            return filename;
+        }
+        return file_id;
     }
 
     private void writePatientData(JsonWriter writer) throws IOException {
         writer.beginObject();
-        writer.name("id").value(getFileName());
+        writer.name("id").value(getFileId());
         writer.name("heartRate").value(personalInfo.getHeartRate());
         writer.beginArray();
         for(String symptom : personalInfo.getSymptoms()){

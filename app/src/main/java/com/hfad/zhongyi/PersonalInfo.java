@@ -8,7 +8,7 @@ public class PersonalInfo {
     private String name;
     private String password;
     private String id;
-    private ArrayList<String> symptoms = new ArrayList<String>();
+    private ArrayList<String> symptoms = new ArrayList<>();
 
     private int heartRate;
 
