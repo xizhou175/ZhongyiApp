@@ -27,7 +27,7 @@
             android:layout_gravity="center_horizontal"
             android:columnCount="3"
             android:orientation="horizontal"
-            android:useDefaultMargins="true"></GridLayout>
+            android:useDefaultMargins="true"/>
     </FrameLayout>
 
     <RelativeLayout

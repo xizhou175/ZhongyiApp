@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="1"
+    tools:context=".DIsplayActivity">
+
+    <TableRow
+
+        android:id="@+id/firstRow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="可能的病症"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="18dip"/>
+        <TextView
+            android:id="@+id/potientialDiseases"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:padding="18dip" />
+    </TableRow>
+
+    <TableRow
+
+        android:id="@+id/secondRow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="脉象"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="18dip"/>
+        <TextView
+            android:id="@+id/maixiang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:padding="18dip" />
+    </TableRow>
+
+    <TableRow
+
+        android:id="@+id/thirdRow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="脉象"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="18dip"/>
+        <TextView
+            android:id="@+id/medicine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:padding="18dip" />
+    </TableRow>
+
+</TableLayout>
