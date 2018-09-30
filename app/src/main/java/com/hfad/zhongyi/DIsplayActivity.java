@@ -29,8 +29,10 @@ public class DIsplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
         Intent intent = getIntent();
-        // final String fileId= intent.getStringExtra(EXTRA_MESSAGE);
-        final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061135";
+        final String fileId= intent.getStringExtra(EXTRA_MESSAGE);
+        // final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061135";
+        // final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061104";
+
         new Thread(new Runnable() {
             public void run() {
                 try {

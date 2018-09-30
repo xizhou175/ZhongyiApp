@@ -190,8 +190,7 @@ public class UploadActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             cal.setTimeZone(TimeZone.getTimeZone("Asia/Chongqing"));
             Date now = cal.getTime();
-            String filename = personalInfo.getId() + "_" + new SimpleDateFormat("ddMMyyhhmmss").format(now);
-            return filename;
+            file_id = personalInfo.getId() + "_" + new SimpleDateFormat("ddMMyyhhmmss").format(now);
         }
         return file_id;
     }
