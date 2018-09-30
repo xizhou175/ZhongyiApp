@@ -17,25 +17,27 @@ import java.util.ArrayList;
 
 public class DIsplayActivity extends AppCompatActivity {
 
-    String serverURL = "18.188.169.26/diag/";
+    String serverURL = "http://18.188.169.26/diag/";
     String diseasesInString;
     String maixiang;
     String shexiang;
-    static final String EXTRA_MESSAGE = "";
+    static final String EXTRA_MESSAGE = "FileId";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
         Intent intent = getIntent();
-        final String fileName = intent.getStringExtra(EXTRA_MESSAGE);
+        // final String fileId= intent.getStringExtra(EXTRA_MESSAGE);
+        final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061135";
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    serverURL += fileName;
+                    serverURL += fileId;
                     URL url = new URL(serverURL);
                     HttpURLConnection client = (HttpURLConnection) url.openConnection();
-                    client.setDoOutput(true);
+                    client.setDoInput(true);
                     client.setRequestMethod("GET");
 
                     InputStreamReader reader = new InputStreamReader(client.getInputStream());
@@ -43,22 +45,24 @@ public class DIsplayActivity extends AppCompatActivity {
                     String infoStr = br.readLine();
                     JSONObject diagInfo = new JSONObject(infoStr);
                     JSONArray possibleDiseases = diagInfo.getJSONArray("症状");
-                    String maixiang = diagInfo.getString("脉象");
-                    String shexiang = diagInfo.getString("舌象");
+                    maixiang = diagInfo.getString("脉象");
+                    shexiang = diagInfo.getString("舌象");
                     for(int i = 0; i < possibleDiseases.length(); i++){
                         diseasesInString += possibleDiseases.getString(i);
                         diseasesInString += "\n";
                     }
-
-                    TextView textView = findViewById(R.id.potientialDiseases);
-                    textView.setText(diseasesInString);
-                    textView = findViewById(R.id.maixiang);
-                    textView.setText(maixiang);
-                    textView.setText(shexiang);
                 } catch (Exception e) {
                     //Log.d(TAG, e.getMessage());
                     e.printStackTrace();
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) findViewById(R.id.potientialDiseases)).setText(diseasesInString == null ? "未找到相关信息" : diseasesInString);
+                        ((TextView) findViewById(R.id.maixiang)).setText(maixiang == null ? "未找到相关信息" : maixiang);
+                        ((TextView) findViewById(R.id.shexiang)).setText(shexiang == null ? "未找到相关信息" : shexiang);
+                    }
+                });
             }
         }).start();
     }

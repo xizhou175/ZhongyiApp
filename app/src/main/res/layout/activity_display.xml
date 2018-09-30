@@ -52,12 +52,13 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="脉象"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="18dip"/>
+            android:padding="18dip"
+            android:text="舌像" />
+
         <TextView
-            android:id="@+id/medicine"
+            android:id="@+id/shexiang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"

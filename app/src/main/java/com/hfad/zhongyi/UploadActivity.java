@@ -46,7 +46,7 @@ public class UploadActivity extends AppCompatActivity {
             Intent intent = new Intent(UploadActivity.this, DIsplayActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(DIsplayActivity.EXTRA_MESSAGE, getFileName());
+            intent.putExtra(DIsplayActivity.EXTRA_MESSAGE, getFileId());
             startActivity(intent);
         }
     };
@@ -164,6 +164,7 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     private boolean uploadPatientData() {
+        Log.d(TAG, "uploadPatientData");
         try {
             connection = (HttpURLConnection) new URL(server_url + "/patientdata").openConnection();
             connection.setDoOutput(true);
@@ -179,6 +180,7 @@ public class UploadActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -198,9 +200,10 @@ public class UploadActivity extends AppCompatActivity {
         writer.beginObject();
         writer.name("id").value(getFileId());
         writer.name("heartRate").value(personalInfo.getHeartRate());
+        writer.name("symptoms");
         writer.beginArray();
         for(String symptom : personalInfo.getSymptoms()){
-            writer.name("symptoms").value(symptom);
+            writer.value(symptom);
         }
         writer.endArray();
         writer.endObject();
