@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     personalInfo.setId(userInfo.getString("id"));
                                     personalInfo.setName(userInfo.getString("name"));
                                     personalInfo.setGender(userInfo.getString("gender"));
+                                    Log.d(TAG, "gender" + personalInfo.getGender());
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {
