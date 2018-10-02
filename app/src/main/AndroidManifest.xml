@@ -28,7 +28,7 @@
         <activity android:name=".BodyPartsActivity" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".HeartRateMonitor" />
-        <activity android:name=".LoginActivity" >
+        <activity android:name=".DIsplayActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,7 +36,7 @@
         </activity>
         <activity android:name=".PersonalInformationActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".DIsplayActivity">
+        <activity android:name=".LoginActivity">
         </activity>
     </application>
 
