@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,13 +36,19 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
         final Button confirm  = findViewById(R.id.confirm);
         confirm.setOnClickListener(this);
 
+        if (((ColorDrawable) maleButton.getBackground()).getColor() == getResources().getColor(R.color.holo_blue_light)) {
+            personalInfo.setGender("male");
+        } else {
+            personalInfo.setGender("female");
+        }
+
         maleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ColorDrawable buttonColor = (ColorDrawable) maleButton.getBackground();
                 int color = buttonColor.getColor();
+                personalInfo.setGender("male");
                 if(color != getResources().getColor(R.color.holo_blue_light)) {
-                    personalInfo.setGender("male");
                     if (color == getResources().getColor(R.color.holo_blue_light)) {
                         maleButton.setBackgroundColor(getResources().getColor(R.color.lightgrey));
                         femaleButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
@@ -56,10 +63,10 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
         femaleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                personalInfo.setGender("female");
                 ColorDrawable buttonColor = (ColorDrawable) femaleButton.getBackground();
                 int color = buttonColor.getColor();
                 if(color != getResources().getColor(R.color.holo_blue_light)) {
-                    personalInfo.setGender("female");
                     if (color == getResources().getColor(R.color.lightgrey)) {
                         maleButton.setBackgroundColor(getResources().getColor(R.color.lightgrey));
                         femaleButton.setBackgroundColor(getResources().getColor(R.color.holo_blue_light));
@@ -115,8 +122,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     wr.write(jsonObject.toString());
                     wr.flush();
                     final int responseCode = client.getResponseCode();
-                    System.out.println("response code is:");
-                    System.out.println(responseCode);
+                    System.out.println("response code is:" + responseCode);
 
                     if(responseCode == 200){
                         Intent intent = new Intent(PersonalInformationActivity.this, BodyActivity.class);
@@ -131,7 +137,6 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     }
 
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -146,6 +151,9 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                 break;
             case 500:
                 message = "服务器故障，请稍后再试";
+                break;
+            case 400:
+                message = "输入的信息有误";
                 break;
             default:
                 message = "未知错误";
@@ -169,7 +177,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
             System.out.println("failed to create json");
         }
         String json = jsonObject.toString();
-        System.out.println(json);
+        Log.d("formatDataAsJson", json);
         return jsonObject;
     }
 }

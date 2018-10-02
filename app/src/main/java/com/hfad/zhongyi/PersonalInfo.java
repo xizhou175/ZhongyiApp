@@ -3,7 +3,7 @@ package com.hfad.zhongyi;
 import java.util.ArrayList;
 
 public class PersonalInfo {
-    private String gender = "male";
+    private String gender;
     private Integer age;
     private String name;
     private String password;

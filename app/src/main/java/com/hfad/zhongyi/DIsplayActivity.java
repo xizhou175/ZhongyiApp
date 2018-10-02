@@ -25,12 +25,16 @@ public class DIsplayActivity extends AppCompatActivity {
     String shexiang;
     static final String EXTRA_MESSAGE = "FileId";
     final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_180918092717";
+    //final String fileId= intent.getStringExtra(EXTRA_MESSAGE);
+    // final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061135"; // Expected return {}
+    // final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061104"; //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
         Intent intent = getIntent();
+
         Button testButton = findViewById(R.id.test);
         final TextView textView = findViewById(R.id.loading);
         testButton.setOnClickListener(new View.OnClickListener(){
@@ -43,6 +47,7 @@ public class DIsplayActivity extends AppCompatActivity {
                             HttpURLConnection client = (HttpURLConnection) url.openConnection();
                             client.setDoInput(true);
                             client.setRequestMethod("GET");
+
 
                             InputStreamReader reader = new InputStreamReader(client.getInputStream());
                             BufferedReader br = new BufferedReader(reader);
