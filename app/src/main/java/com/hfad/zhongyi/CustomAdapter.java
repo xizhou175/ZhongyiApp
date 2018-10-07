@@ -33,8 +33,6 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         ImageView delete;
     }
 
-    private int lastPosition = -1;
-
     @Override
     public void onClick(View v){
         int position = (Integer) v.getTag();
