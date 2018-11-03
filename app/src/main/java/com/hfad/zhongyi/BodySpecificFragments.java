@@ -95,11 +95,11 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         if (item.getSelected() == true) {
             item.setSelected(false);
             page.getChosen().remove(symId);
-            personalInfo.removeSymptom(page.getId2symptom().get(id));
+            personalInfo.removeSymptom(page.getId2symptom().get(symId));
         } else {
             item.setSelected(true);
             page.getChosen().add(symId);
-            personalInfo.addSymptom(page.getId2symptom().get(id));
+            personalInfo.addSymptom(page.getId2symptom().get(symId));
         }
 
         adapter.notifyDataSetChanged();
