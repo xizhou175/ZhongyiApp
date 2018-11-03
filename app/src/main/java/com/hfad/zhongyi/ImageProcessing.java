@@ -9,7 +9,7 @@ public abstract class ImageProcessing {
 
         final int frameSize = width * height;
 
-        Log.d("ImageProcessing", "" + frameSize + ":" + yuv420sp.length);
+        // Log.d("ImageProcessing", "" + frameSize + ":" + yuv420sp.length);
 
         int sum = 0;
         long totalTime = 0;

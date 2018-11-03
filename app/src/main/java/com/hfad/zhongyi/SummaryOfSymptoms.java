@@ -49,7 +49,8 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     }
 
     public void goToCamera(View view) {
-        Intent intent = new Intent(this, CameraActivity.class);
+        // Intent intent = new Intent(this, CameraActivity.class);
+        Intent intent = new Intent(this, DIsplayActivity.class);
         startActivity(intent);
     }
 

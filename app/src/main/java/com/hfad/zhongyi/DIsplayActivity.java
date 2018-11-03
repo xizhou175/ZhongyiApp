@@ -3,6 +3,7 @@ package com.hfad.zhongyi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonWriter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -14,15 +15,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.hfad.zhongyi.Patient.personalInfo;
+
 public class DIsplayActivity extends AppCompatActivity {
 
-    String serverURL = "http://18.188.169.26/diag/";
+    // String serverURL = "http://18.188.169.26/diag/";
+    private String serverURL = "http://10.0.0.9:5000";
 
     // table keys
     String possibleSymtoms = "";
@@ -71,10 +78,18 @@ public class DIsplayActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    URL url = new URL(serverURL + fileId);
+                    // URL url = new URL(serverURL + fileId);
+                    URL url = new URL(serverURL + "/match-symptoms");
                     HttpURLConnection client = (HttpURLConnection) url.openConnection();
+                    client.setDoOutput(true);
                     client.setDoInput(true);
-                    client.setRequestMethod("GET");
+                    client.setRequestMethod("POST");
+
+                    client.setRequestProperty("Content-Type", "application/json");
+                    OutputStream output = client.getOutputStream();
+                    JsonWriter writer = new JsonWriter(new OutputStreamWriter(output, "UTF-8"));
+                    writePatientData(writer);
+                    writer.flush();
 
                     InputStreamReader reader = new InputStreamReader(client.getInputStream());
                     BufferedReader br = new BufferedReader(reader);
@@ -91,6 +106,8 @@ public class DIsplayActivity extends AppCompatActivity {
                     possibleDiseases = getJsonData("证型");
                     fangji = getJsonData("方剂");
                     zhongyao = getJsonData("中药");
+
+                    System.out.println("PossibleDiseases" + possibleDiseases);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -146,5 +163,16 @@ public class DIsplayActivity extends AppCompatActivity {
         } else {
             throw new JSONException("Unexpected object");
         }
+    }
+
+    private void writePatientData(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        writer.name("symptoms");
+        writer.beginArray();
+        for(String symptom : personalInfo.getSymptoms()){
+            writer.value(symptom);
+        }
+        writer.endArray();
+        writer.endObject();
     }
 }

@@ -15,6 +15,7 @@ public class BodyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        personalInfo.setGender("male");
         setContentView(R.layout.activity_top_level);
         ImageView body = findViewById(R.id.bodyView);
         if(personalInfo.getGender().equals("male")){

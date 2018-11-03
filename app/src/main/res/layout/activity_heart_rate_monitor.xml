@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -10,28 +12,55 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/top"
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
+        android:layout_height="111dp"
         android:alpha="0.8"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
 
+        <Button
+            android:id="@+id/flash_toggle"
+            android:layout_width="47dp"
+            android:layout_height="83dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:onClick="onClick"
+            android:text="闪光灯"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/default_text"
-            android:textSize="32sp"></TextView>
+            android:textSize="32sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></TextView>
 
         <com.hfad.zhongyi.HeartbeatView
             android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"></com.hfad.zhongyi.HeartbeatView>
+            android:layout_width="135dp"
+            android:layout_height="98dp"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></com.hfad.zhongyi.HeartbeatView>
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

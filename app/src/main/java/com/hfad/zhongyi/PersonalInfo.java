@@ -62,6 +62,6 @@ public class PersonalInfo {
 
 }
 
-class Patient{
+class Patient {
     public static PersonalInfo personalInfo = new PersonalInfo();
 }

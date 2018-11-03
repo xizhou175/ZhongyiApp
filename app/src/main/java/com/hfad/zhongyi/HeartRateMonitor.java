@@ -18,6 +18,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -30,7 +31,7 @@ import static com.hfad.zhongyi.Patient.personalInfo;
  *
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class HeartRateMonitor extends Activity implements DialogInterface.OnClickListener {
+public class HeartRateMonitor extends Activity implements DialogInterface.OnClickListener, Button.OnClickListener {
 
     private static final String TAG = "HeartRateMonitor";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
@@ -47,6 +48,8 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
     private boolean measurementFinished = false;
     private int finalBeats = 0;
     private Lock lock = new ReentrantLock();
+
+    private boolean flashOn = false;
 
 
     @Override
@@ -66,6 +69,22 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         } else {
             startCamera();
             cameraOpenConfirmed = true;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (mCamera != null) {
+            Camera.Parameters parameters = mCamera.getParameters();
+            if (flashOn) {
+                Log.d(TAG, "turn off flashlight");
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            } else {
+                Log.d(TAG, "turn on flashlight");
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            }
+            flashOn = !flashOn;
+            mCamera.setParameters(parameters);
         }
     }
 
@@ -214,7 +233,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             if (data == null) throw new NullPointerException();
-            Camera.Size size;
+                Camera.Size size;
             try {
                 size = cam.getParameters().getPreviewSize();
             } catch (Exception e) {
@@ -232,6 +251,8 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
             if (!processing.compareAndSet(false, true)) return;
 
             int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data, size.width, size.height);
+
+            // Log.d(TAG, "imgAvg=" + imgAvg);
 
             if (imgAvg < 180) {
                 text.setText("--");
@@ -254,6 +275,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
                 newType = TYPE.RED;
                 if (newType != currentType) {
                     beats++;
+                    //
                     // Log.d(TAG, "BEAT!! beats="+beats);
                 }
             } else if (imgAvg > rollingAverage) {
@@ -382,7 +404,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
             mCamera.setPreviewDisplay(mHolder);
 
             Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            // parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             mCamera.setParameters(parameters);
             mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.startPreview();
