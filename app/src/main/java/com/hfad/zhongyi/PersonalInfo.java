@@ -3,7 +3,7 @@ package com.hfad.zhongyi;
 import java.util.ArrayList;
 
 public class PersonalInfo {
-    private String gender;
+    private String gender="male";
     private Integer age;
     private String name;
     private String password;
@@ -54,6 +54,10 @@ public class PersonalInfo {
     public void removeSymptom(String symptom) { symptoms.remove(symptom); }
 
     public ArrayList<String> getSymptoms() { return this.symptoms; }
+
+    public void clearSymptoms(){
+        symptoms.clear();
+    }
 
     @Override
     public String toString() {

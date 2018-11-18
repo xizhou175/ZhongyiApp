@@ -3,6 +3,7 @@ package com.hfad.zhongyi;
 public class DataModel {
     private String symptom;
     private boolean selected;
+    public static int numSelected;
 
     public DataModel(String symptom, boolean selected){
         this.symptom = symptom;

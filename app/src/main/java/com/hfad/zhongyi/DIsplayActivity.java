@@ -22,102 +22,49 @@ import java.util.Arrays;
 
 public class DIsplayActivity extends AppCompatActivity {
 
-    String serverURL = "http://18.188.169.26/diag/";
-
-    // table keys
-    String possibleSymtoms = "";
-    String maixiang = "";
-    String shexiang = "";
-
-    String possibleDiseases = "";
-    String fangji = "";
-    String zhongyao = "";
-
     // json object for server response
     JSONObject diagInfo;
 
-    String fileId;
-    static final String EXTRA_MESSAGE = "FileId";
-
-    //final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_180918092717";
-    //final String fileId = "a04a8a21-ae1a-40c5-ac28-e37429caff68_290918061135"; // Expected return {}
-    //final String fileId = "test";
+    static String EXTRA_MASSAGE = "";
+    String PossibleDiseases= "";
+    String Fangji = "";
+    String ChineseMedicine = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
         Intent intent = getIntent();
-        fileId = intent.getStringExtra(EXTRA_MESSAGE);
 
-        Button button = findViewById(R.id.test);
-        button.setVisibility(View.INVISIBLE);
+        PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
+        Fangji = intent.getStringArrayExtra(EXTRA_MASSAGE)[1];
+        ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];
 
-        TextView textView = findViewById(R.id.loading);
-        textView.setText("正在查询...");
+        SetTable();
 
-        runQuery(button, textView);
-
-        button.setOnClickListener(new View.OnClickListener() {
+        /*button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
                 Intent intent = new Intent(DIsplayActivity.this, BodyActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
-    private void runQuery(final Button button, final TextView textView) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    URL url = new URL(serverURL + fileId);
-                    HttpURLConnection client = (HttpURLConnection) url.openConnection();
-                    client.setDoInput(true);
-                    client.setRequestMethod("GET");
+    private void SetTable(){
 
-                    InputStreamReader reader = new InputStreamReader(client.getInputStream());
-                    BufferedReader br = new BufferedReader(reader);
-                    String infoStr = br.readLine();
+        TableLayout table = findViewById(R.id.display_table);
+        String[] keys = new String[]{"可能的症状", "脉象", "舌像"};
+        String[] vals = new String[]{"未找到相关信息", "未找到相关信息", "未找到相关信息"};
 
-                    System.out.println(infoStr);
+        keys = new String[]{"证型", "方剂", "中药"};
+        vals = new String[]{PossibleDiseases, Fangji, ChineseMedicine};
 
-                    diagInfo = new JSONObject(infoStr);
-
-                    possibleSymtoms = getJsonData("症状");
-                    shexiang = getJsonData("舌象");
-                    maixiang = getJsonData("脉象");
-
-                    possibleDiseases = getJsonData("证型");
-                    fangji = getJsonData("方剂");
-                    zhongyao = getJsonData("中药");
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        textView.setText("查询结束");
-                        button.setVisibility(View.VISIBLE);
-                        TableLayout table = findViewById(R.id.display_table);
-                        String[] keys = new String[]{"可能的症状", "脉象", "舌像"};
-                        String[] vals = new String[]{"未找到相关信息", "未找到相关信息", "未找到相关信息"};
-                        if (possibleSymtoms != "") {
-                            vals = new String[]{possibleSymtoms, maixiang, shexiang};
-                        } else if (possibleDiseases != "") {
-                            keys = new String[]{"证型", "方剂", "中药"};
-                            vals = new String[]{possibleDiseases, fangji, zhongyao};
-                        }
-                        for (int i = 0; i < 3; i++) {
-                            TableRow row = (TableRow) table.getChildAt(i);
-                            ((TextView)row.getChildAt(0)).setText(keys[i]);
-                            ((TextView)row.getChildAt(1)).setText(vals[i]);
-                        }
-                    }
-                });
-            }
-        }).start();
+        for (int i = 0; i < 3; i++) {
+            TableRow row = (TableRow) table.getChildAt(i);
+            ((TextView)row.getChildAt(0)).setText(keys[i]);
+            ((TextView)row.getChildAt(1)).setText(vals[i]);
+        }
     }
 
     private String getJsonData(String key) {
@@ -146,5 +93,10 @@ public class DIsplayActivity extends AppCompatActivity {
         } else {
             throw new JSONException("Unexpected object");
         }
+    }
+
+    public void goToCamera(View view) {
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
     }
 }

@@ -37,14 +37,23 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     private static CustomAdapter adapter;
     public static final String MESSAGE = "message";
     private String message = "";
+    static String EXTRA_MASSAGE = "";
+
+    String PossibleDiseases= "";
+    String Fangji = "";
+    String ChineseMedicine = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_summary_of_symptoms);
-        parentLinearLayout = findViewById(R.id.linear_layout);
+
         Intent intent = getIntent();
-        this.message = intent.getStringExtra(MESSAGE);
+        PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
+        Fangji = intent.getStringArrayExtra(EXTRA_MASSAGE)[1];
+        ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];
+
+        setContentView(R.layout.activity_summary_of_symptoms);
+
         addListView();
     }
 
@@ -56,7 +65,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         super.onBackPressed();
-        Intent it = new Intent(SummaryOfSymptoms.this, BodyPartsActivity.class);
+        Intent it = new Intent(SummaryOfSymptoms.this, BodyActivity.class);
         it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         System.out.println(this.message);
         it.putExtra(BodyPartsActivity.EXTRA_MESSAGE, this.message);
@@ -86,17 +95,9 @@ public class SummaryOfSymptoms extends AppCompatActivity {
 
     public void addListView(){
         ArrayList<String> overallList = new ArrayList<>();
-        for(int i = 0; i < Pages.pages.length; i++){
-            Page page = Pages.pages[i];
-            HashSet<Integer> symptomsChosen = page.getChosen();
-            HashMap<Integer, String> id2symptom = page.getId2symptom();
-            String[] chosenSymptoms = new String[symptomsChosen.size()];
-            int j = 0;
-            for(Integer key : symptomsChosen){
-                chosenSymptoms[j++] = id2symptom.get(key);
-            }
-            ArrayList<String> symptomsList = new ArrayList<>(Arrays.asList(chosenSymptoms));
-            overallList.addAll(symptomsList);
+
+        for(Integer i : Pages.allChosen){
+            overallList.add(Pages.idTosymptom.get(i));
         }
 
         dataModels = new ArrayList<>();
@@ -107,11 +108,23 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         adapter = new CustomAdapter(dataModels, getApplicationContext());
         ListView lv = findViewById(R.id.lv);
         lv.setAdapter(adapter);
+
+
     }
 
     public void addSymptoms(View view){
-        Intent i = new Intent(this, BodyActivity.class);
+        Intent i = new Intent(this, ToSelectMoreSymptomsActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
+    }
+
+    public void getResult(View view){
+        Intent intent = new Intent(this, DIsplayActivity.class);
+        String EXTRA[] = new String[3];
+        EXTRA[0] = PossibleDiseases;
+        EXTRA[1] = Fangji;
+        EXTRA[2] = ChineseMedicine;
+        intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        startActivity(intent);
     }
 }

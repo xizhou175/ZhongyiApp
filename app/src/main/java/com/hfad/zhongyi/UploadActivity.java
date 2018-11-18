@@ -46,7 +46,7 @@ public class UploadActivity extends AppCompatActivity {
             Intent intent = new Intent(UploadActivity.this, DIsplayActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(DIsplayActivity.EXTRA_MESSAGE, getFileId());
+            //intent.putExtra(DIsplayActivity.EXTRA_MESSAGE, getFileId());
             startActivity(intent);
         }
     };

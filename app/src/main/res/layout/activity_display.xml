@@ -70,21 +70,16 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/test"
+        android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:onClick="goToCamera"
+        android:text="相机"
+        android:textColor="@android:color/white"
+        android:visibility="visible"
         android:background="@android:color/holo_blue_light"
-        android:text="继续"
-        android:textColor="@android:color/white" />
-
-    <TextView
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
-        android:text="点击TEST以计算"
-        android:visibility= "visible"/>
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"/>
+
 </LinearLayout>

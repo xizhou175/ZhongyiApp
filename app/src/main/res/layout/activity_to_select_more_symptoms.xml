@@ -1,9 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_above="@id/button_layout"
+    android:layout_alignParentTop="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintStart_toStartOf="parent"
     tools:context=".ToSelectMoreSymptomsActivity">
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="请继续选择症状"
+            android:textSize="30dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@android:color/holo_blue_light"/>
+
+        <ListView
+            android:id="@+id/lv"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:divider="@android:color/white"
+            android:dividerHeight="6dp" />
+
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
+            android:onClick="startOver"
+            android:layout_gravity="center_horizontal"
+            android:text="重新选择"
+            android:background="@color/grey"
+            android:layout_marginTop="6dp"/>
+
+        <Button
+            android:id="@+id/result_button"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
+            android:onClick="gotoSummary"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:text="症状总结"
+            android:background="@color/grey"
+            android:layout_marginTop="6dp"/>
+
+</LinearLayout>
