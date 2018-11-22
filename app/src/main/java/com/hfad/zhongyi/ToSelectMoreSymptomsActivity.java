@@ -75,7 +75,7 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
                     public void run() {
                         System.out.println("possibleDiseases:" + possibleDiseases.toString());
                         if(possibleDiseases.size() != 0){
-                            System.out.println("enter here");
+                            //System.out.println("enter here");
                             Button b = findViewById(R.id.result_button);
                             ListView lv = findViewById(R.id.lv);
                             lv.setAdapter(null);

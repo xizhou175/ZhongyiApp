@@ -92,9 +92,14 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();
         Log.d("onItemClick", "pos: "+position + " " + "symptom: " + symptom);
+
+
         Integer symId = Pages.symptomToid.get(symptom);
+        Integer idinPage = page.getSymptom2id().get(symptom);
+
         if (item.getSelected() == true) {
             item.setSelected(false);
+            page.setChosen(idinPage);
             Pages.allChosen.remove(symId);
             personalInfo.removeSymptom(Pages.idTosymptom.get(symId));
             DataModel.numSelected -= 1;
@@ -102,7 +107,9 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         } else {
             item.setSelected(true);
 
+            page.setChosen(idinPage);
             Pages.allChosen.add(symId);
+
             personalInfo.addSymptom(Pages.idTosymptom.get(symId));
             System.out.println("Symptom selected:" + personalInfo.getSymptoms().toString());
             DataModel.numSelected += 1;
@@ -119,6 +126,8 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
     private void inflateButtons(GridLayout layout) {
         HashMap<Integer, String> map = page.getId2symptom();
         for (int id = 1; id <= 6; id++) {
+            if(page.getChosen().contains(id)) page.setChosen(id);
+
             Button button = new Button(layout.getContext());
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             button.setText(map.get(id));
@@ -126,7 +135,10 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             button.setTextColor(getResources().getColor(R.color.white));
             button.setLayoutParams(params);
 
-            if (page.getChosen().contains(id)) {
+            String sym  = page.getId2symptom().get(id);
+            Integer overallId = Pages.symptomToid.get(sym);
+
+            if (Pages.allChosen.contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
             } else {
                 button.setBackgroundResource(R.drawable.my_button_released);
@@ -138,18 +150,23 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                     int id = view.getId();
                     Button button = view.findViewById(id);
                     String symptom = button.getText().toString();
-                    if (!Pages.allChosen.contains(id)) {
+                    int symId = Pages.symptomToid.get(symptom);
+                    if (!Pages.allChosen.contains(symId)) {
+                        System.out.println("enter here");
                         button.setBackgroundResource(R.drawable.my_button_pressed);
-                        Pages.allChosen.add(id);
-                        personalInfo.addSymptom(page.getId2symptom().get(id));
+                        page.setChosen(id);
+                        Pages.allChosen.add(symId);
+                        personalInfo.addSymptom(Pages.idTosymptom.get(symId));
                         DataModel.numSelected += 1;
                         Intent intent = new Intent(getActivity(), ToSelectMoreSymptomsActivity.class);
                         intent.putExtra(ToSelectMoreSymptomsActivity.EXTRA_MESSAGE, symptom);
+                        System.out.println("symptom:" + symptom);
                         startActivity(intent);
                     } else {
                         button.setBackgroundResource(R.drawable.my_button_released);
-                        Pages.allChosen.remove(id);
-                        personalInfo.removeSymptom(page.getId2symptom().get(id));
+                        Pages.allChosen.remove(symId);
+                        page.setChosen(id);
+                        personalInfo.removeSymptom(Pages.idTosymptom.get(symId));
                         DataModel.numSelected -= 1;
                     }
                 }
