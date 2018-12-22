@@ -33,27 +33,27 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.hfad.zhongyi.Patient.personalInfo;
-
 public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  AdapterView.OnItemClickListener {
 
     ArrayList<DataModel> dataModels;
     public static final String EXTRA_MESSAGE = "";
     private static CustomAdapterForDropDown adapter;
     private HttpURLConnection connection;
-    private String server_url = "http://10.0.2.2:5000";
+    private String server_url = Config.getConfig().server_url;
     private String CRLF = "\r\n";
     private String CharSet = "UTF-8";
     private String TAG = "uploadSelectedSymptom";
 
     HttpURLConnection client;
     String readline = "";
-    ArrayList<String> tempSymptoms;
+
+    private ArrayList<String> tempSymptoms = new ArrayList<>();
 
     public static ArrayList<String> possibleSymptoms = new ArrayList<String>();
     public static ArrayList<String> possibleDiseases = new ArrayList<String>();
     public static ArrayList<String> fangJi = new ArrayList<String>();
     public static ArrayList<String> chineseMedicine = new ArrayList<String>();
+
 
     // json object for server response
     JSONObject diagInfo;
@@ -92,7 +92,7 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
 
     public void clearData(){
         Pages.allChosen.clear();
-        personalInfo.clearSymptoms();
+        Patient.getPatient().clearSymptoms();
         possibleSymptoms.clear();
         possibleDiseases.clear();
         tempSymptoms.clear();
@@ -185,13 +185,13 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
         if (item.getSelected() == true) {
             item.setSelected(false);
             Pages.allChosen.remove(symId);
-            personalInfo.removeSymptom(Pages.idTosymptom.get(symId));
+            Patient.getPatient().removeSymptom(Pages.idTosymptom.get(symId));
             DataModel.numSelected -= 1;
         } else {
             item.setSelected(true);
             Pages.allChosen.add(symId);
-            personalInfo.addSymptom(Pages.idTosymptom.get(symId));
-            System.out.println("personalInfo:" + personalInfo.getSymptoms().toString());
+            Patient.getPatient().addSymptom(Pages.idTosymptom.get(symId));
+            System.out.println("personalInfo:" + Patient.getPatient().getSymptoms().toString());
             DataModel.numSelected += 1;
         }
 
@@ -239,7 +239,6 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
                 result.addAll(flatten(arrayData.get(i)));
             }
             return result;
-            //return String.join("\n", result);
         } catch (JSONException e) {
             return result;
         }
@@ -262,7 +261,7 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
 
     private void writeSelectedSymptoms(JsonWriter writer) throws IOException {
         writer.beginArray();
-        for(String symptom : personalInfo.getSymptoms()){
+        for(String symptom : Patient.getPatient().getSymptoms()){
             writer.value(symptom);
         }
         writer.endArray();

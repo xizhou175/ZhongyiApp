@@ -66,6 +66,12 @@ public class PersonalInfo {
 
 }
 
-class Patient{
-    public static PersonalInfo personalInfo = new PersonalInfo();
+class Patient {
+    private static PersonalInfo info = null;
+    public static PersonalInfo getPatient() {
+        if (info == null) {
+            info = new PersonalInfo();
+        }
+        return info;
+    }
 }

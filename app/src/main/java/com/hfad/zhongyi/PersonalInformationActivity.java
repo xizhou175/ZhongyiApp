@@ -11,21 +11,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static com.hfad.zhongyi.Patient.personalInfo;
+import static com.hfad.zhongyi.Patient.getPatient;
 
 public class PersonalInformationActivity extends AppCompatActivity implements View.OnClickListener{
 
     private AlertDialog alertDialog;
-    //private static final String serverURL = "http://10.0.2.2:8080/registration"; // use for emulator
-    // private String serverURL = "http://10.0.0.9:8080/registration";
-    private static final String serverURL = "http://18.188.169.26/registration";
+    private String serverURL = Config.getConfig().server_url;
+    private PersonalInfo personalInfo = Patient.getPatient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +112,7 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
             public void run() {
                 JSONObject jsonObject = formatDataAsJson();
                 try {
-                    URL url = new URL(serverURL);
+                    URL url = new URL(serverURL + "/registration");
                     HttpURLConnection client = (HttpURLConnection) url.openConnection();
                     client.setDoOutput(true);
                     client.setDoInput(true);
@@ -124,7 +126,15 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     final int responseCode = client.getResponseCode();
                     System.out.println("response code is:" + responseCode);
 
-                    if(responseCode == 200){
+                    if(responseCode == 200) {
+                        InputStreamReader reader = new InputStreamReader(client.getInputStream());
+                        BufferedReader br = new BufferedReader(reader);
+                        String infoStr = br.readLine();
+                        JSONObject userInfo = new JSONObject(infoStr);
+                        personalInfo.setId(userInfo.getString("id"));
+                        personalInfo.setName(userInfo.getString("name"));
+                        personalInfo.setGender(userInfo.getString("gender"));
+                        Log.d("PersonalInformation", "startBodyActivity");
                         Intent intent = new Intent(PersonalInformationActivity.this, BodyActivity.class);
                         startActivity(intent);
                     } else {
@@ -137,6 +147,8 @@ public class PersonalInformationActivity extends AppCompatActivity implements Vi
                     }
 
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }

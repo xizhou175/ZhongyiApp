@@ -21,17 +21,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static com.hfad.zhongyi.Patient.personalInfo;
-
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private String TAG = "LoginActivity";
 
     private String username = "";
     private String password = "";
-    //private static final String serverURL = "http://10.0.2.2:8080/login"; // use for emulator
-    //private static final String serverURL = "http://10.0.0.9:8080/login";   // use for real phones
-    private static final String serverURL = "http://18.188.169.26/login"; // aws server
+    private static final String serverURL = Config.getConfig().server_url;
+    private PersonalInfo personalInfo = Patient.getPatient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     new Thread(new Runnable() {
                         public void run() {
                             try {
-                                URL url = new URL(serverURL);
+                                URL url = new URL(serverURL + "/login");
                                 HttpURLConnection client = (HttpURLConnection) url.openConnection();
                                 client.setDoOutput(true);
                                 client.setRequestMethod("POST");
@@ -69,7 +66,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     personalInfo.setId(userInfo.getString("id"));
                                     personalInfo.setName(userInfo.getString("name"));
                                     personalInfo.setGender(userInfo.getString("gender"));
-                                    Log.d(TAG, "gender" + personalInfo.getGender());
                                     Intent intent = new Intent(LoginActivity.this, BodyActivity.class);
                                     startActivity(intent);
                                 } else {

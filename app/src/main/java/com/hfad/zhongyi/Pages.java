@@ -40,10 +40,10 @@ class Page {
                 id2symptom.put(id, s);
                 symptom2id.put(s, id);
 
-
                 Pages.allSymptoms.add(s);
-                Pages.idTosymptom.put(id + Pages.idTosymptom.size(), s);
-                Pages.symptomToid.put(s, id + Pages.symptomToid.size());
+                int global_id = Pages.idTosymptom.size();
+                Pages.idTosymptom.put(global_id, s);
+                Pages.symptomToid.put(s, global_id);
 
                 if (id >= 6) {
                     otherSymptoms.add(s);
@@ -57,7 +57,7 @@ class Page {
         }
     }
 
-    Page(String des){
+    Page(String des) {
         getSymptomsFromFile(des);
     }
 

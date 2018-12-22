@@ -3,14 +3,14 @@ package com.hfad.zhongyi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-
-import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class BodyActivity extends AppCompatActivity {
 
     private boolean front = true;
+    private PersonalInfo personalInfo = Patient.getPatient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class BodyActivity extends AppCompatActivity {
     public void onClickFlip(View view){
         ImageView imageView = findViewById(R.id.bodyView);
         if(front) {
-            if(Patient.personalInfo.getGender().equals("male")) {
+            if(personalInfo.getGender().equals("male")) {
                 imageView.setImageResource(R.drawable.male_back);
             }
             else imageView.setImageResource(R.drawable.female_back);
@@ -36,7 +36,7 @@ public class BodyActivity extends AppCompatActivity {
             findViewById(R.id.chestText).setVisibility(View.INVISIBLE);
             findViewById(R.id.backText).setVisibility(View.VISIBLE);
         } else {
-            if(Patient.personalInfo.getGender().equals("male")) {
+            if(personalInfo.getGender().equals("male")) {
                 imageView.setImageResource(R.drawable.male_front);
             }
             else imageView.setImageResource(R.drawable.female_front);
@@ -73,5 +73,14 @@ public class BodyActivity extends AppCompatActivity {
             intent.putExtra(BodyPartsActivity.EXTRA_MESSAGE, "6");
         }
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent t = new Intent(this, LoginActivity.class);
+        t.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(t);
+        finish();
     }
 }

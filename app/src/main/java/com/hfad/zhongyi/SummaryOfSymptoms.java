@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -97,6 +98,8 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         ArrayList<String> overallList = new ArrayList<>();
 
         for(Integer i : Pages.allChosen){
+            String symptom = Pages.idTosymptom.get(i);
+            Log.d("Summary", String.format("symId: %d, sym: %s, verify: %s", i, symptom, Pages.symptomToid.get(symptom)));
             overallList.add(Pages.idTosymptom.get(i));
         }
 

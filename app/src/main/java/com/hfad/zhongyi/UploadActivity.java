@@ -25,13 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static com.hfad.zhongyi.Patient.personalInfo;
-
 public class UploadActivity extends AppCompatActivity {
 
     private String TAG = "upload";
-    // private String server_url = "http://10.0.0.9:8080";
-    private String server_url = "http://18.188.169.26";
+    private String server_url = Config.getConfig().server_url;
     private String boundary = Long.toHexString(System.currentTimeMillis());
     private HttpURLConnection connection;
     private String CRLF = "\r\n";
@@ -43,10 +40,9 @@ public class UploadActivity extends AppCompatActivity {
     View.OnClickListener onClickSuccess = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(UploadActivity.this, DIsplayActivity.class);
+            Intent intent = new Intent(UploadActivity.this, BodyActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //intent.putExtra(DIsplayActivity.EXTRA_MESSAGE, getFileId());
             startActivity(intent);
         }
     };
@@ -97,7 +93,7 @@ public class UploadActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                if (image != null && personalInfo.getHeartRate() > 0){
+                if (image != null && Patient.getPatient().getHeartRate() > 0){
                     if (uploadImage() && uploadPatientData()) {
                         uploadFinished(true);
                         return;
@@ -190,7 +186,7 @@ public class UploadActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             cal.setTimeZone(TimeZone.getTimeZone("Asia/Chongqing"));
             Date now = cal.getTime();
-            file_id = personalInfo.getId() + "_" + new SimpleDateFormat("ddMMyyhhmmss").format(now);
+            file_id = Patient.getPatient().getId() + "_" + new SimpleDateFormat("yyMMddhhmmss").format(now);
         }
         return file_id;
     }
@@ -198,10 +194,10 @@ public class UploadActivity extends AppCompatActivity {
     private void writePatientData(JsonWriter writer) throws IOException {
         writer.beginObject();
         writer.name("id").value(getFileId());
-        writer.name("heartRate").value(personalInfo.getHeartRate());
+        writer.name("heartRate").value(Patient.getPatient().getHeartRate());
         writer.name("symptoms");
         writer.beginArray();
-        for(String symptom : personalInfo.getSymptoms()){
+        for(String symptom : Patient.getPatient().getSymptoms()){
             writer.value(symptom);
         }
         writer.endArray();

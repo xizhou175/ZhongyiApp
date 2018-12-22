@@ -19,18 +19,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.List;
-import java.util.TreeSet;
-
-import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class BodySpecificFragments extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener{
 
@@ -91,8 +81,6 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
 
         TextView symtxt = v.findViewById(R.id.symptom);
         String symptom = symtxt.getText().toString();
-        Log.d("onItemClick", "pos: "+position + " " + "symptom: " + symptom);
-
 
         Integer symId = Pages.symptomToid.get(symptom);
         Integer idinPage = page.getSymptom2id().get(symptom);
@@ -101,7 +89,7 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             item.setSelected(false);
             page.setChosen(idinPage);
             Pages.allChosen.remove(symId);
-            personalInfo.removeSymptom(Pages.idTosymptom.get(symId));
+            Patient.getPatient().removeSymptom(Pages.idTosymptom.get(symId));
             DataModel.numSelected -= 1;
             adapter.notifyDataSetChanged();
         } else {
@@ -110,16 +98,13 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
             page.setChosen(idinPage);
             Pages.allChosen.add(symId);
 
-            personalInfo.addSymptom(Pages.idTosymptom.get(symId));
-            System.out.println("Symptom selected:" + personalInfo.getSymptoms().toString());
+            Patient.getPatient().addSymptom(Pages.idTosymptom.get(symId));
             DataModel.numSelected += 1;
             Intent intent = new Intent(getActivity(), ToSelectMoreSymptomsActivity.class);
             intent.putExtra(ToSelectMoreSymptomsActivity.EXTRA_MESSAGE, symptom);
             startActivity(intent);
             adapter.notifyDataSetChanged();
         }
-
-        System.out.println("personalInfo:" + personalInfo.getSymptoms().toString());
     }
 
 
@@ -127,16 +112,14 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
         HashMap<Integer, String> map = page.getId2symptom();
         for (int id = 1; id <= 6; id++) {
             if(page.getChosen().contains(id)) page.setChosen(id);
+            final String sym  = map.get(id);
 
             Button button = new Button(layout.getContext());
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            button.setText(map.get(id));
+            button.setText(sym);
             button.setId(id);
             button.setTextColor(getResources().getColor(R.color.white));
             button.setLayoutParams(params);
-
-            String sym  = page.getId2symptom().get(id);
-            Integer overallId = Pages.symptomToid.get(sym);
 
             if (Pages.allChosen.contains(id)) {
                 button.setBackgroundResource(R.drawable.my_button_pressed);
@@ -152,21 +135,19 @@ public class BodySpecificFragments extends Fragment implements View.OnClickListe
                     String symptom = button.getText().toString();
                     int symId = Pages.symptomToid.get(symptom);
                     if (!Pages.allChosen.contains(symId)) {
-                        System.out.println("enter here");
                         button.setBackgroundResource(R.drawable.my_button_pressed);
-                        page.setChosen(id);
+                        page.setChosen(symId);
                         Pages.allChosen.add(symId);
-                        personalInfo.addSymptom(Pages.idTosymptom.get(symId));
+                        Patient.getPatient().addSymptom(Pages.idTosymptom.get(symId));
                         DataModel.numSelected += 1;
                         Intent intent = new Intent(getActivity(), ToSelectMoreSymptomsActivity.class);
                         intent.putExtra(ToSelectMoreSymptomsActivity.EXTRA_MESSAGE, symptom);
-                        System.out.println("symptom:" + symptom);
                         startActivity(intent);
                     } else {
                         button.setBackgroundResource(R.drawable.my_button_released);
                         Pages.allChosen.remove(symId);
-                        page.setChosen(id);
-                        personalInfo.removeSymptom(Pages.idTosymptom.get(symId));
+                        page.setChosen(symId);
+                        Patient.getPatient().removeSymptom(Pages.idTosymptom.get(symId));
                         DataModel.numSelected -= 1;
                     }
                 }

@@ -8,7 +8,6 @@ import android.view.View;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.EditText;
-import static com.hfad.zhongyi.Patient.personalInfo;
 
 public class RegisterActivity extends Activity implements View.OnClickListener{
 
@@ -57,8 +56,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
 
         if(!username.isEmpty() && !password.isEmpty()){
             //create a new user
-            personalInfo.setName(username);
-            personalInfo.setPassword(password);
+            Patient.getPatient().setName(username);
+            Patient.getPatient().setPassword(password);
         }
 
         Intent intent = new Intent(RegisterActivity.this, PersonalInformationActivity.class);

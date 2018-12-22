@@ -21,8 +21,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import static com.hfad.zhongyi.Patient.personalInfo;
-
 
 /**
  * This class extends Activity to handle a picture preview, process the preview
@@ -42,7 +40,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 
     private static int averageIndex = 0;
     private static final int averageArraySize = 4;
-    private static final int[] averageArray = new int[averageArraySize];
+    private static int[] averageArray = null;
 
     private boolean measurementFinished = false;
     private int finalBeats = 0;
@@ -55,7 +53,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 Intent intent = new Intent(this, UploadActivity.class);
                 intent.putExtra("imageFile", getIntent().getStringExtra("imageFile"));
-                personalInfo.setHeartRate(finalBeats);
+                Patient.getPatient().setHeartRate(finalBeats);
                 startActivity(intent);
                 finish();
             } else {
@@ -94,6 +92,12 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
 
         image = findViewById(R.id.image);
         text = (TextView) findViewById(R.id.text);
+
+        averageIndex = 0;
+        averageArray = new int[averageArraySize];
+        lock.lock();
+            beatsIndex = 0;
+        lock.unlock();
 
         measurementAlert().show();
     }
@@ -311,6 +315,7 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
                     finishMeasurement();
                 }
             }
+
             processing.set(false);
         }
     };
