@@ -40,7 +40,7 @@ public class UploadActivity extends AppCompatActivity {
     View.OnClickListener onClickSuccess = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(UploadActivity.this, BodyActivity.class);
+            Intent intent = new Intent(UploadActivity.this, DisplayActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

@@ -122,12 +122,12 @@ public class SummaryOfSymptoms extends AppCompatActivity {
     }
 
     public void getResult(View view){
-        Intent intent = new Intent(this, DIsplayActivity.class);
+        Intent intent = new Intent(this, DisplayActivity.class);
         String EXTRA[] = new String[3];
         EXTRA[0] = PossibleDiseases;
         EXTRA[1] = Fangji;
         EXTRA[2] = ChineseMedicine;
-        //intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        //intent.putExtra(DisplayActivity.EXTRA_MASSAGE, EXTRA);
         startActivity(intent);
     }
 }

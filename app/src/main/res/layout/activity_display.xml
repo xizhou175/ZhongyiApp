@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".DIsplayActivity">
+    tools:context=".DisplayActivity">
 
     <TableLayout
         android:id="@+id/display_table"
@@ -73,8 +73,8 @@
         android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="goToCamera"
-        android:text="相机"
+        android:onClick="goToBodyActivity"
+        android:text="完成"
         android:textColor="@android:color/white"
         android:visibility="visible"
         android:background="@android:color/holo_blue_light"

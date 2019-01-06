@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DIsplayActivity extends AppCompatActivity {
+public class DisplayActivity extends AppCompatActivity {
 
     // json object for server response
     JSONObject diagInfo;
@@ -48,7 +48,7 @@ public class DIsplayActivity extends AppCompatActivity {
         /*button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
-                Intent intent = new Intent(DIsplayActivity.this, BodyActivity.class);
+                Intent intent = new Intent(DisplayActivity.this, BodyActivity.class);
                 startActivity(intent);
             }
         });*/
@@ -98,18 +98,18 @@ public class DIsplayActivity extends AppCompatActivity {
         }
     }
 
-    public void goToCamera(View view) {
-        Intent intent = new Intent(this, CameraActivity.class);
+    public void goToBodyActivity(View view) {
+        Intent intent = new Intent(this, BodyActivity.class);
         startActivity(intent);
     }
 
     public void getResult(View view){
-        Intent intent = new Intent(this, DIsplayActivity.class);
+        Intent intent = new Intent(this, DisplayActivity.class);
         String EXTRA[] = new String[3];
         EXTRA[0] = PossibleDiseases;
         EXTRA[1] = Fangji;
         EXTRA[2] = ChineseMedicine;
-        //intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        //intent.putExtra(DisplayActivity.EXTRA_MASSAGE, EXTRA);
         startActivity(intent);
     }
 }

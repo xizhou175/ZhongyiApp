@@ -32,7 +32,7 @@
         <activity android:name=".BodyPartsActivity" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".HeartRateMonitor" />
-        <activity android:name=".DIsplayActivity" >
+        <activity android:name=".DisplayActivity" >
         </activity>
         <activity android:name=".PersonalInformationActivity" />
         <activity android:name=".RegisterActivity" />
