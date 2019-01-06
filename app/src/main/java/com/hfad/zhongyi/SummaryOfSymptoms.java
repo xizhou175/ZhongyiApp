@@ -49,9 +49,9 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
-        Fangji = intent.getStringArrayExtra(EXTRA_MASSAGE)[1];
-        ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];
+        //PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
+        //Fangji = intent.getStringArrayExtra(EXTRA_MASSAGE)[1];
+        //ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];
 
         setContentView(R.layout.activity_summary_of_symptoms);
 
@@ -127,7 +127,7 @@ public class SummaryOfSymptoms extends AppCompatActivity {
         EXTRA[0] = PossibleDiseases;
         EXTRA[1] = Fangji;
         EXTRA[2] = ChineseMedicine;
-        intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        //intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
         startActivity(intent);
     }
 }

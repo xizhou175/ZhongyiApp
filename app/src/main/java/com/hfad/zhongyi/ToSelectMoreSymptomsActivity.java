@@ -274,8 +274,8 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
         startActivity(i);
     }
 
-    public void gotoSummary(View view){
-        Intent intent = new Intent(this, SummaryOfSymptoms.class);
+    public void gotoCamera(View view){
+        Intent intent = new Intent(this, CameraActivity.class);
         String EXTRA[] = new String[3];
         EXTRA[0] = possibleDiseases.toString();
         EXTRA[1] = fangJi.toString();
@@ -287,7 +287,8 @@ public class ToSelectMoreSymptomsActivity extends AppCompatActivity implements  
         fangJi.clear();
         chineseMedicine.clear();
 
-        intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        //intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
+        DIsplayActivity.EXTRA_MASSAGE = EXTRA;
         startActivity(intent);
     }
 

@@ -324,6 +324,11 @@ public class HeartRateMonitor extends Activity implements DialogInterface.OnClic
         measurementFinished = true;
         measurementAlert().show();
     }
+
+    public void gotoSummary(View view){
+        Intent intent = new Intent(this, SummaryOfSymptoms.class);
+        startActivity(intent);
+    }
 }
 
 

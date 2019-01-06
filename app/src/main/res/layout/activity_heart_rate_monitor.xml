@@ -32,6 +32,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"></com.hfad.zhongyi.HeartbeatView>
 
+        <Button
+            android:id="@+id/result_button"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
+            android:onClick="gotoSummary"
+            android:text="查看结果"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/grey"
+            android:layout_marginTop="6dp"/>
+
     </LinearLayout>
 
 </FrameLayout>

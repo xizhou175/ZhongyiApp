@@ -25,7 +25,7 @@ public class DIsplayActivity extends AppCompatActivity {
     // json object for server response
     JSONObject diagInfo;
 
-    static String EXTRA_MASSAGE = "";
+    static String EXTRA_MASSAGE[] = new String[3];
     String PossibleDiseases= "";
     String Fangji = "";
     String ChineseMedicine = "";
@@ -36,9 +36,12 @@ public class DIsplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display);
         Intent intent = getIntent();
 
-        PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
+        /*PossibleDiseases = intent.getStringArrayExtra(EXTRA_MASSAGE)[0];
         Fangji = intent.getStringArrayExtra(EXTRA_MASSAGE)[1];
-        ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];
+        ChineseMedicine = intent.getStringArrayExtra(EXTRA_MASSAGE)[2];*/
+        PossibleDiseases = EXTRA_MASSAGE[0];
+        Fangji = EXTRA_MASSAGE[1];
+        ChineseMedicine = EXTRA_MASSAGE[2];
 
         SetTable();
 
@@ -97,6 +100,16 @@ public class DIsplayActivity extends AppCompatActivity {
 
     public void goToCamera(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
+    }
+
+    public void getResult(View view){
+        Intent intent = new Intent(this, DIsplayActivity.class);
+        String EXTRA[] = new String[3];
+        EXTRA[0] = PossibleDiseases;
+        EXTRA[1] = Fangji;
+        EXTRA[2] = ChineseMedicine;
+        //intent.putExtra(DIsplayActivity.EXTRA_MASSAGE, EXTRA);
         startActivity(intent);
     }
 }
